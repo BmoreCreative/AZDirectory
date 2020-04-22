@@ -51,9 +51,13 @@ class modAZDirectoryHelper
 			$query->select("DISTINCT(LEFT(SUBSTRING_INDEX(" . $db->quoteName('name') . ", ' ', -1), 1))" . $collation . " AS letter");
 		endif;
 		
+		$query->from($db->quoteName('#__contact_details'));
+		
+		if( $params->get('id') ) :
+			$query->where($db->quoteName('catid') . ' = ' . $params->get('id'));
+		endif;
+		
 		$query
-			->from($db->quoteName('#__contact_details'))
-			->where($db->quoteName('catid') . ' = ' . $params->get('id'))
 			->where($db->quoteName('published') . ' = 1')
 			->order($db->quoteName('letter'));
 
@@ -290,10 +294,12 @@ class modAZDirectoryHelper
 				$query->where("LEFT(SUBSTRING_INDEX(" . $db->quoteName('name') . ", ' ', -1), 1)" . $collation . " = '" . $letter . "'");
 			endif;
 		endif;
+		
+		if( $catid ) :
+			$query->where($db->quoteName('catid') . ' = ' . $catid);
+		endif;
 			
-		$query
-			->where($db->quoteName('catid') . ' = ' . $catid)
-			->where($db->quoteName('published') . ' = 1');
+		$query->where($db->quoteName('published') . ' = 1');
 		
 		// set the sort order
 		switch( $sortorder ) :
