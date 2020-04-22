@@ -65,18 +65,17 @@ defined('_JEXEC') or die('Restricted access');
               	<?php endif; ?>
 				
 				<div class="modazdirectory__result">
-                    <?php if ( $show_image == 1 ) :
-					$contactImage =  JUri::base() . $contact->image;
-					if ( @exif_imagetype( $contactImage ) ) : ?>
-					<img src="<?php echo $contactImage; ?>" alt="<?php echo $contact->name; ?>" class="modazdirectory__image" />
-                    <?php else : ?>
-					<span class="modazdirectory__glyph-camera">
-						<svg class="modazdirectory__icon">
-							<use xlink:href="<?php echo JUri::base() . 'modules/' . $module->module; ?>/assets/symbol-defs.svg#icon-camera"></use>
-						</svg>
-					</span>
-                    <?php endif; endif; ?>
-
+                    <?php if ( $show_image == 1 ) : ?>
+						<?php if ( empty( $contact->image ) ) : ?>
+                        <span class="modazdirectory__glyph-camera">
+                            <svg class="modazdirectory__icon">
+                                <use xlink:href="<?php echo JUri::base() . 'modules/' . $module->module; ?>/assets/symbol-defs.svg#icon-camera"></use>
+                            </svg>
+                        </span>
+						<?php else : ?>
+                        <?php echo JHtml::_('image', JUri::base() . $contact->image, $az->azFormatName($contact->name, $lastname_first), array('class' => 'modazdirectory__image', 'itemprop' => 'image')); ?>
+                  	<?php endif; endif; ?>
+							
                     <div>
                         <?php if ( $az->azVerify( 'name', $contact ) ): ?>
 						<?php if ( $name_hyperlink ) : ?>
@@ -207,14 +206,14 @@ defined('_JEXEC') or die('Restricted access');
 	<?php if ( $name_hyperlink ) : ?>
 	<div id="modazdirectory__modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modazdirectory__label">
 		<div class="modal-dialog modal-lg" role="document">
-			<div class="modal-content">
+			<div class="modal-content-container">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-label="<?php echo JText::_('MOD_AZDIRECTORY_MODAL_CLOSE'); ?>">
 						<span  aria-hidden="true">&times;</span>
 					</button>
 					<h4 class="modal-title" id="modazdirectory__label"><?php echo JText::_('MOD_AZDIRECTORY_MODAL_CONTACT_DETAILS'); ?></h4>
 				</div>
-				<div class="modal-body" id="modazdirectory__modal-body">
+				<div class="modal-body modal-content" id="modazdirectory__modal-body">
 					<div class="modal-spinner"></div>
 				</div>
 				<div class="modal-footer">
