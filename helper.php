@@ -16,18 +16,18 @@ class modAZDirectoryHelper
 	private $params = null;
 	private static $_azInstance = null;
 	
-	public static function azInstance( &$params )
+	public static function azInstance( &$params, $type )
 	{
-		if ( null == self::$_azInstance ) :
-			self::$_azInstance = new self( $params );
+		if( null == self::$_azInstance || empty( $_azInstance[$type] ) ) :
+			self::$_azInstance[$type] = new self( $params );
 		endif;
 	
-		return self::$_azInstance;
+		return self::$_azInstance[$type];
 	}
 
 	public function __construct( &$params ) {
-        $this->params = $params;
-    }
+		$this->params = $params;
+	}
 
     /**
      *

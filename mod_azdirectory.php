@@ -12,7 +12,7 @@
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
 require_once dirname(__FILE__) . '/helper.php';
-$az = modAZDirectoryHelper::azInstance( $params );
+$az = modAZDirectoryHelper::azInstance( $params, $module->id );
 
 $jinput = JFactory::getApplication()->input;
 $modAZAssetsPath = JUri::base() . 'modules/' . $module->module . '/assets/';

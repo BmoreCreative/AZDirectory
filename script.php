@@ -69,7 +69,11 @@ class mod_AZDirectoryInstallerScript
 	 */
 	function postflight($type, $parent) 
 	{
-		JFile::delete(JPATH_SITE . '/modules/mod_azdirectory/assets/jquery.clippath.min.js');
-		JFolder::delete(JPATH_SITE . '/modules/mod_azdirectory/assets/fonts');
+		if(file_exists(JPATH_SITE . '/modules/mod_azdirectory/assets/jquery.clippath.min.js')):
+			JFile::delete(JPATH_SITE . '/modules/mod_azdirectory/assets/jquery.clippath.min.js');
+		endif;
+		if(file_exists(JPATH_SITE . '/modules/mod_azdirectory/assets/fonts')):
+			JFolder::delete(JPATH_SITE . '/modules/mod_azdirectory/assets/fonts');
+		endif;
 	}
 }
