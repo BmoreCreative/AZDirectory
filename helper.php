@@ -26,7 +26,8 @@ class modAZDirectoryHelper
 		return self::$_azInstance[$type];
 	}
 
-	public function __construct( &$params ) {
+	public function __construct( &$params )
+	{
 		mb_internal_encoding( 'utf-8' ); // @important
 		$this->params = $params;
 	}
@@ -112,6 +113,12 @@ class modAZDirectoryHelper
 		endforeach;
 		
 		$alphabet = $this->params->get( 'swedish' );
+		
+		// if no Language is selected, default to English (0)
+		if( empty( $alphabet ) ){
+			$alphabet = array( 0 );
+			$this->params->set( 'swedish', $alphabet );
+		}
 		
 		// if more than 1 alphabet is selected
 		if( sizeof( $alphabet ) > 1 ):
@@ -320,7 +327,8 @@ class modAZDirectoryHelper
 	 *
 	 * @access    public
 	 */	
-	public function azFormatAddress( $contact, $postcodeFirst ){
+	public function azFormatAddress( $contact, $postcodeFirst )
+	{
 		if ( $this->azVerify( 'suburb', $contact ) || $this->azVerify( 'state', $contact ) || $this->azVerify( 'postcode', $contact ) ) :
 			
 			$lines = array();
@@ -354,7 +362,8 @@ class modAZDirectoryHelper
 	 *
 	 * @access    public
 	 */	
-	public static function azFirstOption( $sortorder ){
+	public static function azFirstOption( $sortorder )
+	{
 		$language = JFactory::getLanguage();
 		$language->load( 'mod_azdirectory' );
 
@@ -372,8 +381,8 @@ class modAZDirectoryHelper
 	 *
 	 * @access    public
 	 */
-	public static function azGenerateQuery( $letter, $start, $params ){
-		
+	public static function azGenerateQuery( $letter, $start, $params )
+	{	
 		// get category id
 		$catid = $params->get( 'id' );
 		
@@ -386,6 +395,9 @@ class modAZDirectoryHelper
 		// get the pagination setting
 		$pagination = $params->get( 'pagination' );
 		
+		// get the alphabet
+		$alphabet = $params->get( 'swedish' );
+				
 		// access database object
 		$db = JFactory::getDBo();
 
@@ -420,6 +432,7 @@ class modAZDirectoryHelper
 			else: 
 				$words = explode( ' ', $name );
 				$record->letter = mb_substr( end( $words ), 0, 1, "utf8" );
+				$record->ln = end( $words );
 			endif;
 		endforeach;
 		
@@ -429,12 +442,18 @@ class modAZDirectoryHelper
 				return $a->letter === $letter;
 			});
 		endif;
-
+		
+		$locale = 'en_US.UTF-8';
+		if( in_array( 3, $alphabet ) ) $locale = 'cs_CZ.UTF-8';
+		setlocale( LC_ALL, $locale );
+		
 		usort( $result, function( $a, $b ) use ( $sortorder ){
 			switch( $sortorder ) :
 				case 'fn' :
+					return strcoll( $a->name, $b->name );
+					break;
 				case 'ln' :
-					return strcmp( $a->letter, $b->letter );
+					return strcoll( $a->ln, $b->ln );
 					break;
 				case 'sortfield' :
 					return strcmp( $a->sortname1, $b->sortname1 );
@@ -443,14 +462,14 @@ class modAZDirectoryHelper
 					return strcmp( $a->ordering, $b->ordering );
 					break;
 				default :
-					return strcmp( $a->letter, $b->letter );
+					return strcoll( $a->ln, $b->ln );
 			endswitch;
 		});
 
 		// get the true number of array entries
 		$total_rows = sizeof( $result );
 
-		// pagination is not All
+		// pagination if not All
 		if( $pagination !== 'All' ) :
 			$result = array_slice( $result, $start, $pagination );
 		endif;
@@ -461,11 +480,13 @@ class modAZDirectoryHelper
 	/**
 	 * Method to get numeric value of character as DEC string
 	 */
-	private static function _azMBConvertEncoding( $str, $to_encoding, $from_encoding = NULL ){
+	private static function _azMBConvertEncoding( $str, $to_encoding, $from_encoding = NULL )
+	{
 		return iconv( ( $from_encoding === NULL ) ? mb_internal_encoding() : $from_encoding, $to_encoding, $str );
 	}
 
-	private static function _azMBOrd( $char, $encoding = 'UTF-8' ){
+	private static function _azMBOrd( $char, $encoding = 'UTF-8' )
+	{
 		if( $encoding === 'UCS-4BE' ){
 			list( , $ord ) = ( strlen( $char ) === 4 ) ? @unpack('N', $char ) : @unpack( 'n', $char );
 			return $ord;
@@ -474,7 +495,8 @@ class modAZDirectoryHelper
 		}
 	}
 
-	private static function _azStrPadUnicode( $str, $pad_len, $pad_str = ' ', $dir = STR_PAD_RIGHT ){
+	private static function _azStrPadUnicode( $str, $pad_len, $pad_str = ' ', $dir = STR_PAD_RIGHT )
+	{
 		$str_len = mb_strlen( $str );
 		$pad_str_len = mb_strlen( $pad_str );
 		if( !$str_len && ( $dir == STR_PAD_RIGHT || $dir == STR_PAD_LEFT ) ){
@@ -501,6 +523,5 @@ class modAZDirectoryHelper
 		}
 	   
 		return $result;
-	}
-	
+	}	
 }
