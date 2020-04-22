@@ -1,1 +1,1 @@
-jQuery(document).ready(function(){jQuery("#modazdirectory__select").on("change",function(){this.form.submit()})});
+document.addEventListener("DOMContentLoaded",function(){document.getElementById("modazdirectory__select").addEventListener("change",function(e){this.form.submit()})});

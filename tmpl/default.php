@@ -15,56 +15,63 @@ defined('_JEXEC') or die('Restricted access');
 <div class="modazdirectory<?php echo $moduleclass_sfx; ?>" id="modazdirectory">
 	<a name="modazdirectory"></a>
 	<?php if( $show_alphabet == 1 ) : ?>
-		<ul class="modazdirectory__list">
-			<li class="modazdirectory__listitem-all">
-				<a class="modazdirectory__link" href="<?php echo JUri::current(); ?>?lastletter=<?php echo JText::_('JALL'); ?>#modazdirectory" rel="<?php echo JText::_('JALL'); ?>">
-					<?php echo JText::_('JALL'); ?>
-				</a>
-			</li>
-			<?php
-			foreach ( $azdirectory[0] as $letter ) : 
-				if ( in_array( $letter, $azdirectory[1] ) ) : ?>
-					<?php $addnClass = ( ( $lastletter ) && ( $lastletter == $letter ) ) ? " selected" : ""; ?>
-					<li class="modazdirectory__listitem<?php echo $addnClass; ?>"><a class="modazdirectory__link" href="<?php echo JUri::current() . "?lastletter=" . $letter; ?>#modazdirectory" rel="<?php echo $letter; ?>"><?php echo $letter; ?></a></li>
-				<?php else : ?>
-					<li class="modazdirectory__listitem"><?php echo $letter; ?></li>
-				<?php
-				endif;
-			endforeach;
-			?>
-		</ul>
+		<?php foreach( $azdirectory[0] as $alphabet => $letters ) : ?>
+			<?php if( sizeof( $azdirectory[0] ) > 1 ) : ?>
+			<p class="modazdirectory__label">
+				<?php echo JText::_( 'MOD_AZDIRECTORY_TMPL_CONTACTS_WITH' ); ?>
+				<?php echo JText::_( 'MOD_AZDIRECTORY_' . strtoupper( $alphabet ) ); ?>
+				<?php echo JText::_( 'MOD_AZDIRECTORY_TMPL_NAMES' ); ?>
+			</p>
+			<?php endif; ?>
+			<ul class="modazdirectory__list">
+				<li class="modazdirectory__listitem-all">
+					<a class="modazdirectory__link" href="<?php echo JUri::current(); ?>?lastletter=<?php echo JText::_( 'JALL' ); ?>#modazdirectory" rel="<?php echo JText::_( 'JALL' ); ?>">
+						<?php echo JText::_( 'JALL' ); ?>
+					</a>
+				</li>
+				<?php foreach( $letters as $letter ): ?>
+					<?php if( in_array( $letter, $azdirectory[1] ) ) : ?>
+						<?php $addnClass = ( ( $lastletter ) && ( $lastletter == $letter ) ) ? " selected" : ""; ?>
+						<li class="modazdirectory__listitem<?php echo $addnClass; ?>"><a class="modazdirectory__link" href="<?php echo JUri::current() . "?lastletter=" . $letter; ?>#modazdirectory" rel="<?php echo $letter; ?>"><?php echo $letter; ?></a></li>
+					<?php else : ?>
+						<li class="modazdirectory__listitem"><?php echo $letter; ?></li>
+					<?php endif; ?>
+				<?php endforeach; ?>
+			</ul>
+		<?php endforeach; ?>
+		
 		<form name="modazdirectory__form" class="modazdirectory__form" method="post">
 			<select name="modazdirectory__select" id="modazdirectory__select">
 				<option value=""><?php echo $az->azFirstOption( $sortorder ); ?></option>
 				<option value="<?php echo JUri::current(); ?>?lastletter=<?php echo JText::_('JALL'); ?>#modazdirectory"><?php echo JText::_('JALL'); ?></option>
-				<?php foreach ( $azdirectory[1] as $letter ) : ?>
-				<option value="<?php echo JUri::current() . "?lastletter=" . $letter; ?>#modazdirectory"><?php echo $letter; ?></option>
+				<?php foreach( $azdirectory[0] as $alphabet => $letters ) : ?>
+					<?php if( sizeof( $azdirectory[0] ) > 1 ) : ?>
+					<optgroup label="<?php echo JText::_( 'MOD_AZDIRECTORY_' . strtoupper( $alphabet ) ); ?>">
+					<?php endif; ?>
+					<?php foreach( $letters as $letter ) : ?>
+						<?php if( in_array( $letter, $azdirectory[1] ) ) : ?>
+						<option value="<?php echo JUri::current() . "?lastletter=" . $letter; ?>#modazdirectory"><?php echo $letter; ?></option>
+						<?php endif; ?>
+					<?php endforeach; ?>
+					<?php if( sizeof( $azdirectory[0] ) > 1 ): ?>
+					</optgroup>
+					<?php endif; ?>
 				<?php endforeach; ?>
 			</select>
 			<noscript><input type="submit" name="modazdirectory__submit" id="modazdirectory__submit" value="Submit" /></noscript>
 			<?php echo JHtml::_( 'form.token' ); ?>
 		</form>
 	<?php endif; ?>
-    <div class="modazdirectory__results">
+	
+    <?php if ( !empty( $contacts ) ) : ?>
 		<?php if ( $show_alphabet == 1 ) : ?>
 			<?php if ( $lastletter ) : ?>
-			<h1><?php echo $lastletter; ?></h1>
+			<<?php echo $header_tag; ?> class="modazdirectory__heading"><?php echo $lastletter; ?></<?php echo $header_tag; ?>>
 			<?php endif; ?>
 		<?php endif; ?>
-		
-        <?php
-		$contactcount = count( $contacts );
-		$counter = 0;
-        ?>
-        
-    	<?php if ( !empty( $contacts ) ) : ?>
-        	<?php foreach ( $contacts as $key => &$contact ) : ?>
-            	<?php $rowcount = ( (int) $key % (int) 2 ) + 1; ?>
-                <?php if ( $rowcount == 1 ) : ?>
-                	<?php $row = $counter / 2; ?>
-            		<div class="modazdirectory__row">
-              	<?php endif; ?>
 
+		<div class="modazdirectory__results">
+        	<?php foreach ( $contacts as $key => $contact ) : ?>
 				<div class="modazdirectory__result modazdirectory__layout-misc_<?php echo ( ( $misc_layout == 1 ) ? 'on' : 'off' ); ?>">
                     <?php if ( $show_image == 1 ) : ?>
 						<?php if ( empty( $contact->image ) ) : ?>
@@ -74,9 +81,9 @@ defined('_JEXEC') or die('Restricted access');
                             </svg>
                         </span>
 						<?php else : ?>
-                        <?php echo JHtml::_('image', JUri::base() . $contact->image, $az->azFormatName($contact->name, $lastname_first), array('class' => 'modazdirectory__image', 'itemprop' => 'image')); ?>
+                        <?php echo JHtml::_('image', JUri::base() . $contact->image, $az->azFormatName($contact->name, $lastname_first), array('class' => 'modazdirectory__image', 'itemprop' => 'image', 'loading' => 'lazy')); ?>
                   	<?php endif; endif; ?>
-							
+
                     <div>
                         <?php if ( $az->azVerify( 'name', $contact ) ): ?>
 						<?php if ( $name_hyperlink ) : ?>
@@ -205,38 +212,39 @@ defined('_JEXEC') or die('Restricted access');
                         <?php echo $contact->misc; ?>
 						</blockquote>
                         <?php endif; ?>
-						
                     </div>
-                    <?php $counter++ ?>
-                </div> <!-- /modazdirectory__result -->
-
-                <?php if ( ( $rowcount == 2 ) or ( $counter == $contactcount ) ) : ?>
-            		</div> <!-- /modazdirectory__row -->
-                <?php endif; ?>
+                </div> <!-- .modazdirectory__result -->
             <?php endforeach; ?>
-   		<?php endif; ?>
+		</div> <!-- .modazdirectory__results -->
+	<?php endif; ?>
 
-    </div> <!-- /modazdirectory__results -->
-
+	<nav class="modazdirectory__pagination">
+		<?php
+		$azPagination = new JPagination( $total, $start, $pagination );
+		$azPagination->setAdditionalUrlParam( 'lastletter', $lastletter );
+		echo $azPagination->getPagesLinks();
+		?>
+	</nav>
+	
 	<?php if ( $name_hyperlink ) : ?>
 	<div id="modazdirectory__modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modazdirectory__label">
 		<div class="modal-dialog modal-lg" role="document">
 			<div class="modal-content-container">
 				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-label="<?php echo JText::_('MOD_AZDIRECTORY_MODAL_CLOSE'); ?>">
+					<button type="button" class="close" data-dismiss="modal" aria-label="<?php echo JText::_( 'MOD_AZDIRECTORY_MODAL_CLOSE' ); ?>">
 						<span  aria-hidden="true">&times;</span>
 					</button>
-					<h4 class="modal-title" id="modazdirectory__label"><?php echo JText::_('MOD_AZDIRECTORY_MODAL_CONTACT_DETAILS'); ?></h4>
+					<h4 class="modal-title" id="modazdirectory__label"><?php echo JText::_( 'MOD_AZDIRECTORY_MODAL_CONTACT_DETAILS' ); ?></h4>
 				</div>
 				<div class="modal-body modal-content" id="modazdirectory__modal-body">
 					<div class="modal-spinner"></div>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal"><?php echo JText::_('MOD_AZDIRECTORY_MODAL_CLOSE'); ?></button>
+					<button type="button" class="btn btn-default" data-dismiss="modal"><?php echo JText::_( 'MOD_AZDIRECTORY_MODAL_CLOSE' ); ?></button>
 				</div>
-			</div> <!-- /modal-content --> 
-		</div> <!-- /modal-dialog -->
-	</div> <!-- /modazdirectory__modal -->
+			</div> <!-- .modal-content --> 
+		</div> <!-- .modal-dialog -->
+	</div> <!-- .modazdirectory__modal -->
 	<?php endif; ?>
 
 </div>

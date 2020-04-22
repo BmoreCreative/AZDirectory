@@ -20,7 +20,7 @@ $modAZAssetsPath = JUri::base() . 'modules/' . $module->module . '/assets/';
 // process form submission
 if( $jinput->get( 'modazdirectory__select' ) ) :
 	JSession::checkToken() or die( 'Invalid Token' );
-	$az->submit( $jinput->getWord( 'modazdirectory__select', '' ) );
+	$az->submit( $jinput->getString( 'modazdirectory__select', '' ) );
 endif;
 
 // get parameters specific to the module configuration
@@ -36,18 +36,18 @@ $azdirectory = $az->getAZDirectory();
 
 // handle lastletter parameter in the URL
 if( !is_null( $jinput->get( 'lastletter' ) ) ) :
-	$lastletter = $jinput->getWord( 'lastletter', '' );
-	$contacts = $az->getContactsNoAjax( $lastletter );
+	$lastletter = $jinput->getString( 'lastletter' );
 else :
-// handle configured last letter
+	// handle configured last letter
+	$defaultletter = ( $sortorder == 'fn' ) ? $defaultletterfn : $defaultletter;
 	if( $defaultletter != '' ) :
 		// trap for "All" -- TO DO: figure out how to include language constant as value in XML
 		if( $defaultletter == 'All' ) :
 			$defaultletter = JText::_( 'JALL' );
 		endif;
 		$lastletter = $defaultletter;
-		$contacts = $az->getContactsNoAjax( $lastletter );
 	endif;
 endif;
 
+list( $contacts, $total, $start ) = $az->azGenerateQuery( $lastletter, 0, $params );
 require JModuleHelper::getLayoutPath( 'mod_azdirectory' );

@@ -6,7 +6,7 @@
 	<copyright>Copyright (C) 2016 Bmore Creative, Inc. All rights reserved.</copyright>
 	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
 	<authorUrl>bmorecreativeinc.com</authorUrl>
-    <version>5.3.5</version>
+    <version>6.0.0</version>
     <description>Arrange contacts in an A-Z, directory-style layout</description>
     <files>
         <filename module="mod_azdirectory">mod_azdirectory.php</filename>
@@ -40,7 +40,8 @@
     <config>
 		<fields name="params">
 			<fieldset name="basic" addfieldpath="/administrator/components/com_contact/models/fields">
-				<field name="id"
+				<field
+					name="id"
 					type="category"
 					description="MOD_AZDIRECTORY_CATEGORY_DESC"
 					extension="com_contact"
@@ -49,19 +50,14 @@
 					multiple="true">
 						<option value="">JOPTION_ALL_CATEGORIES</option>
 				</field>
-
+				
 				<field
-					name="defaultletter"
-					type="sql"
-					default=""
-					description="MOD_AZDIRECTORY_DEFAULT_LETTER_DESC"
-					label="MOD_AZDIRECTORY_DEFAULT_LETTER_LABEL"
-					query="SELECT DISTINCT(LEFT(SUBSTRING_INDEX(name, ' ', -1), 1)) AS lastletter FROM #__contact_details WHERE published = 1 ORDER BY lastletter"
-					key_field="lastletter"
-					value_field="lastletter">
-						<option value="">JNONE</option>
-						<option value="All">JALL</option>
-				</field>
+					name="tags"
+					type="tag"
+					label="JTAG"
+					description="JTAG_DESC"
+					mode="ajax"
+					multiple="true" />
 
 				<field
 					name="sortorder"
@@ -73,6 +69,34 @@
 						<option value="fn">MOD_AZDIRECTORY_SORTORDER_FN</option>
 						<option value="component">MOD_AZDIRECTORY_SORTORDER_COMPONENT</option>
 						<option value="sortfield">MOD_AZDIRECTORY_SORTORDER_SORTFIELD</option>
+				</field>
+				
+				<field
+					name="defaultletter"
+					type="sql"
+					default=""
+					showon="sortorder:ln"
+					description="MOD_AZDIRECTORY_DEFAULT_LETTER_DESC"
+					label="MOD_AZDIRECTORY_DEFAULT_LETTER_LABEL"
+					query="SELECT DISTINCT(LEFT(SUBSTRING_INDEX(name, ' ', -1), 1)) AS lastletter FROM #__contact_details WHERE published = 1 ORDER BY lastletter"
+					key_field="lastletter"
+					value_field="lastletter">
+						<option value="">JNONE</option>
+						<option value="All">JALL</option>
+				</field>
+
+				<field
+					name="defaultletterfn"
+					type="sql"
+					default=""
+					showon="sortorder:fn,component,sortfield"
+					description="MOD_AZDIRECTORY_DEFAULT_LETTER_DESC"
+					label="MOD_AZDIRECTORY_DEFAULT_LETTER_LABEL"
+					query="SELECT DISTINCT(LEFT(name, 1)) AS firstletter FROM #__contact_details WHERE published = 1 ORDER BY firstletter"
+					key_field="firstletter"
+					value_field="firstletter">
+						<option value="">JNONE</option>
+						<option value="All">JALL</option>
 				</field>
 
 				<field
@@ -225,6 +249,19 @@
 						<option value="1">JYES</option>
 						<option value="0">JNO</option>
 				</field>
+				
+				<field
+					name="swedish"
+					type="list"
+					default="0"
+					description="MOD_AZDIRECTORY_LANGUAGE_DESC"
+					label="JFIELD_LANGUAGE_LABEL"
+					multiple="true">
+						<option value="0">MOD_AZDIRECTORY_LANGUAGE_ENGLISH</option>
+						<option value="1">MOD_AZDIRECTORY_LANGUAGE_SWEDISH</option>
+						<option value="2">MOD_AZDIRECTORY_LANGUAGE_RUSSIAN</option>
+						<option value="3">MOD_AZDIRECTORY_LANGUAGE_CZECH</option>
+				</field>				
 
 				<field
 					type="spacer"
@@ -508,19 +545,28 @@
 
 				<field
 					type="spacer"
-					name="spacer_swedish"
+					name="spacer_pagination"
 					hr="true" />
-
+					
 				<field
-					name="swedish"
-					type="radio"
-					class="btn-group btn-group-yesno"
-					default="0"
-					description="MOD_AZDIRECTORY_SWEDISH_DESC"
-					label="MOD_AZDIRECTORY_SWEDISH_LABEL">
-						<option value="1">JYES</option>
-						<option value="0">JNO</option>
+					name="pagination"
+					type="combo"
+					default="All"
+					description="MOD_AZDIRECTORY_PAGINATION_DESC"
+					label="MOD_AZDIRECTORY_PAGINATION_LABEL">
+						<option value="5">J5</option>
+						<option value="10">J10</option>
+						<option value="15">J15</option>
+						<option value="20">J20</option>
+						<option value="25">J25</option>
+						<option value="30">J30</option>
+						<option value="50">J50</option>
+						<option value="100">J100</option>
+						<option value="200">J200</option>
+						<option value="500">J500</option>
+						<option value="All">JALL</option>
 				</field>
+
 			</fieldset>
 			<fieldset name="advanced">
 				<field
