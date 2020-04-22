@@ -14,30 +14,40 @@ defined('_JEXEC') or die('Restricted access');
 
 <div class="modazdirectory<?php echo $moduleclass_sfx; ?>" id="modazdirectory">
 	<a name="modazdirectory"></a>
-	<ul class="modazdirectory__list">
-    	<li class="modazdirectory__listitem-all"><a class="modazdirectory__link" href="<?php echo JUri::current(); ?>?lastletter=All#modazdirectory" rel="All">All</a></li>
-		<?php
-        foreach ( $azdirectory[0] as $letter ) : 
-            if ( in_array( $letter, $azdirectory[1] ) ) : ?>
-            	<?php $addnClass = ( ( $lastletter ) && ( $lastletter == $letter ) ) ? " selected" : ""; ?>
-                <li class="modazdirectory__listitem<?php echo $addnClass; ?>"><a class="modazdirectory__link" href="<?php echo JUri::current() . "?lastletter=" . $letter; ?>#modazdirectory" rel="<?php echo $letter; ?>"><?php echo $letter; ?></a></li>
-            <?php else : ?>
-                <li class="modazdirectory__listitem"><?php echo $letter; ?></li>
-            <?php
-            endif;
-        endforeach;
-        ?>
-	</ul>
-	<form name="modazdirectory__form" class="modazdirectory__form" method="post">
-		<select name="modazdirectory__select" id="modazdirectory__select">
-			<option value=""><?php echo modAZDirectoryHelper::azFirstOption( $sortorder ); ?></option>
-            <option value="<?php echo JUri::current(); ?>?lastletter=All#modazdirectory">All</option>
-			<?php foreach ( $azdirectory[1] as $letter ) : ?>
-			<option value="<?php echo JUri::current() . "?lastletter=" . $letter; ?>#modazdirectory"><?php echo $letter; ?></option>
-			<?php endforeach; ?>
-		</select>
-		<noscript><input type="submit" name="modazdirectory__submit" id="modazdirectory__submit" value="Submit" /></noscript>
-	</form>
+	<?php if( $show_alphabet == 1 ) : ?>
+		<ul class="modazdirectory__list">
+			<?php if( $show_all_option == 1 ) : ?>
+			<li class="modazdirectory__listitem-all">
+				<a class="modazdirectory__link" href="<?php echo JUri::current(); ?>?lastletter=<?php echo JText::_('JALL'); ?>#modazdirectory" rel="<?php echo JText::_('JALL'); ?>">
+					<?php echo JText::_('JALL'); ?>
+				</a>
+			</li>
+			<?php endif; ?>
+			<?php
+			foreach ( $azdirectory[0] as $letter ) : 
+				if ( in_array( $letter, $azdirectory[1] ) ) : ?>
+					<?php $addnClass = ( ( $lastletter ) && ( $lastletter == $letter ) ) ? " selected" : ""; ?>
+					<li class="modazdirectory__listitem<?php echo $addnClass; ?>"><a class="modazdirectory__link" href="<?php echo JUri::current() . "?lastletter=" . $letter; ?>#modazdirectory" rel="<?php echo $letter; ?>"><?php echo $letter; ?></a></li>
+				<?php else : ?>
+					<li class="modazdirectory__listitem"><?php echo $letter; ?></li>
+				<?php
+				endif;
+			endforeach;
+			?>
+		</ul>
+		<form name="modazdirectory__form" class="modazdirectory__form" method="post">
+			<select name="modazdirectory__select" id="modazdirectory__select">
+				<option value=""><?php echo modAZDirectoryHelper::azFirstOption( $sortorder ); ?></option>
+				<?php if( $show_all_option == 1 ) : ?>
+				<option value="<?php echo JUri::current(); ?>?lastletter=<?php echo JText::_('JALL'); ?>#modazdirectory"><?php echo JText::_('JALL'); ?></option>
+				<?php endif; ?>	
+				<?php foreach ( $azdirectory[1] as $letter ) : ?>
+				<option value="<?php echo JUri::current() . "?lastletter=" . $letter; ?>#modazdirectory"><?php echo $letter; ?></option>
+				<?php endforeach; ?>
+			</select>
+			<noscript><input type="submit" name="modazdirectory__submit" id="modazdirectory__submit" value="Submit" /></noscript>
+		</form>
+	<?php endif; ?>
     <div class="modazdirectory__results">
 		<?php if ( $lastletter ) : ?>
         <h1><?php echo $lastletter; ?></h1>

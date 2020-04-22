@@ -34,6 +34,10 @@ if( !is_null( $jinput->get('lastletter') ) ) :
 else :
 // handle configured last letter
 	if( $defaultletter != '' ) :
+		// trap for "All" -- TO DO: figure out how to include language constant as value in XML
+		if( $defaultletter == 'All' ) :
+			$defaultletter = JText::_('JALL');
+		endif;
 		$lastletter = $defaultletter;
 		$contacts =  modAZDirectoryHelper::getContactsNoAjax( $lastletter, $params );
 	endif;

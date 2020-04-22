@@ -285,7 +285,7 @@ class modAZDirectoryHelper
 		$query->from($db->quoteName('#__contact_details'));
 			
 		// if a specific letter is selected
-		if( $letter != 'All' ) :
+		if( $letter != JText::_('JALL') ) :
 			if( $sortorder == 'fn' ) :
 				// get the first letter of the first name
 				$query->where("LEFT(" . $db->quoteName('name') . ", 1)" . $collation . " = '" . $letter . "'");
