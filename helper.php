@@ -27,9 +27,8 @@ class modAZDirectoryHelper
 		$doc = JFactory::getDocument();
 		$doc->addStyleSheet('modules/mod_azdirectory/assets/modazdirectory.css');
 		
-		// load javascript after jQuery
+		// load Javascript after jQuery
 		JHtml::_('jquery.framework');
-		$doc->addScript('modules/mod_azdirectory/assets/jquery.clippath.min.js');
 		$doc->addScript('modules/mod_azdirectory/assets/modazdirectory.js');
 
 		// access database object
@@ -38,17 +37,29 @@ class modAZDirectoryHelper
 		// set collation
 		$collation = ( $params->get('swedish') == 1 ) ? self::_azGetCollation() : "";
 		
-		// get the first letter of the last name
+		// get sort order
+		$sortorder = $params->get('sortorder');
+		
+		// initialize query
 		$query = $db->getQuery(true);
+		
+		if( $sortorder == 'fn' ) :
+			// get the first letter of the first name
+			$query->select("DISTINCT(LEFT(" . $db->quoteName('name') . ", 1))" . $collation . " AS letter");
+		else :
+			// get the first letter of the last name
+			$query->select("DISTINCT(LEFT(SUBSTRING_INDEX(" . $db->quoteName('name') . ", ' ', -1), 1))" . $collation . " AS letter");
+		endif;
+		
 		$query
-			->select("DISTINCT(LEFT(SUBSTRING_INDEX(" . $db->quoteName('name') . ", ' ', -1), 1))" . $collation . " AS lastletter")
 			->from($db->quoteName('#__contact_details'))
 			->where($db->quoteName('catid') . ' = ' . $params->get('id'))
 			->where($db->quoteName('published') . ' = 1')
-			->order($db->quoteName('lastletter'));
+			->order($db->quoteName('letter'));
+
 		$db->setQuery($query);
-		$rows = $db->loadAssocList('lastletter');
-		$lastletters = array_keys($rows);
+		$rows = $db->loadAssocList('letter');
+		$letters = array_keys($rows);
 		
 		// get the alphabet
 		$english = range('A', 'Z');
@@ -64,7 +75,7 @@ class modAZDirectoryHelper
 		
 		$tmpl = array();
 		$tmpl[0] = $alphabet;
-		$tmpl[1] = $lastletters;
+		$tmpl[1] = $letters;
 		
 		return $tmpl;
     }
@@ -84,12 +95,13 @@ class modAZDirectoryHelper
 		$module = JModuleHelper::getModule('azdirectory');
 		$modparams = new JRegistry($module->params);
 		$catid = $modparams->get('id');
+		$sortorder = $modparams->get('sortorder');
 		
 		// set collation
 		$collation = ( $modparams->get('swedish') == 1 ) ? self::_azGetCollation() : "";
 
 		// get the contacts
-		$contacts = self::_azGenerateQuery($collation, $lastletter, $catid);
+		$contacts = self::_azGenerateQuery($collation, $lastletter, $catid, $sortorder);
 
 		// get parameters specific to the module configuration
 		foreach ($modparams as $key => $value) :
@@ -126,12 +138,15 @@ class modAZDirectoryHelper
 	{
 		// get category id
 		$catid = $params->get('id');
+		
+		// get the sort order
+		$sortorder = $params->get('sortorder');
 
 		// set collation
 		$collation = ( $params->get('swedish') == 1 ) ? self::_azGetCollation() : "";
 
 		// get the contacts
-		$contacts = self::_azGenerateQuery($collation, $lastletter, $catid);
+		$contacts = self::_azGenerateQuery($collation, $lastletter, $catid, $sortorder);
 
 		return $contacts;
 	}
@@ -193,32 +208,114 @@ class modAZDirectoryHelper
 		$filter = JFilterInput::getInstance();
 		return $filter->clean($url, "string");
 	}
+	
+	/**
+	 * Method to format addresses
+	 *
+	 * @access    public
+	 */	
+	public static function azFormatAddress($contact, $postcodeFirst){
+		$lines = array();
+		if ( self::azVerify( 'suburb', $contact ) || self::azVerify( 'state', $contact ) || self::azVerify( 'postcode', $contact ) ) :
+			if ( $postcodeFirst == 1 ) :
+				// international address format
+				$line = array();
+				if ( self::azVerify( 'postcode', $contact ) ) $line[] = '<span>' . $contact->postcode . '</span>';
+				if ( self::azVerify( 'suburb', $contact ) ) $line[] = '<span>' . $contact->suburb . '</span>';
+				if ( self::azVerify( 'state', $contact ) ) $line[] = '<span>' . $contact->state . '</span>';
+				$lines[] = implode( ' ', $line );
+			else :
+				// US address format
+				$line = array();
+				if ( self::azVerify( 'suburb', $contact ) ) $line[] = '<span>' . $contact->suburb . '</span>';
+				if ( self::azVerify( 'state', $contact ) ) $line[] = '<span>' . $contact->state . '</span>';
+				if ( count( $line ) ) $line = array( implode( ', ', $line ) );
+				if ( self::azVerify( 'postcode', $contact ) ) $line[] = '<span>' . $contact->postcode . '</span>';
+				$lines[] = implode( ' ', $line );	
+			endif;
+		endif;
+		
+		return $lines[0];
+	}	
+
+	/**
+	 * Method to get the default option for the select option
+	 *
+	 * @access    public
+	 */	
+	public static function azFirstOption($sortorder){
+		$language = JFactory::getLanguage();
+		$language->load('mod_azdirectory');
+
+		if ( $sortorder == 'fn' ) :
+			$modazfirstoption = JText::_('MOD_AZDIRECTORY_SORTORDER_FN');
+		else :
+			$modazfirstoption = JText::_('MOD_AZDIRECTORY_SORTORDER_LN');
+		endif;
+
+		return $modazfirstoption;
+	}
 
 	/**
 	 * Method to generate SQL query
 	 *
 	 * @access    private
 	 */
-	private static function _azGenerateQuery($collation, $lastletter, $catid){
+	private static function _azGenerateQuery($collation, $letter, $catid, $sortorder){
 		// access database object
 		$db = JFactory::getDBO();
 
+		// initialize query
 		$query = $db->getQuery(true);
-		$query
-			->select(array('*'))
-			->select("LEFT(SUBSTRING_INDEX(" . $db->quoteName('name') . ", ' ', -1), 1) AS lastletter")
-			->from($db->quoteName('#__contact_details'));
+
+		$query->select(array('*'));
+		
+		if( $sortorder == 'fn' ) :
+			// get the first letter of the first name
+			$query->select("LEFT(" . $db->quoteName('name') . ", 1) AS letter");
+		else :
+			// get the first letter of the last name
+			$query->select("LEFT(SUBSTRING_INDEX(" . $db->quoteName('name') . ", ' ', -1), 1) AS letter");
+		endif;
+		
+		$query->from($db->quoteName('#__contact_details'));
 			
 		// if a specific letter is selected
-		if( $lastletter != 'All' ) :
-			$query->where("LEFT(SUBSTRING_INDEX(" . $db->quoteName('name') . ", ' ', -1), 1)" . $collation . " = '" . $lastletter . "'");
+		if( $letter != 'All' ) :
+			if( $sortorder == 'fn' ) :
+				// get the first letter of the first name
+				$query->where("LEFT(" . $db->quoteName('name') . ", 1)" . $collation . " = '" . $letter . "'");
+			else :
+				// get the first letter of the last name
+				$query->where("LEFT(SUBSTRING_INDEX(" . $db->quoteName('name') . ", ' ', -1), 1)" . $collation . " = '" . $letter . "'");
+			endif;
 		endif;
 			
 		$query
 			->where($db->quoteName('catid') . ' = ' . $catid)
-			->where($db->quoteName('published') . ' = 1')
-			->order("SUBSTRING_INDEX(" . $db->quoteName('name') . ", ' ', -1)" . $collation);
-	
+			->where($db->quoteName('published') . ' = 1');
+		
+		// set the sort order
+		switch( $sortorder ) :
+			case 'fn' :
+				$query->order($db->quoteName('name') . $collation);
+				break;
+			case 'ln' :
+				$query->order("SUBSTRING_INDEX(" . $db->quoteName('name') . ", ' ', -1)" . $collation);
+				break;
+			case 'sortfield' :
+				$query
+					->order($db->escape('sortname1'))
+					->order($db->escape('sortname2'))
+					->order($db->escape('sortname3'));
+				break;
+			case 'component' :
+				$query->order($db->escape('ordering'));
+				break;
+			default :
+				$query->order("SUBSTRING_INDEX(" . $db->quoteName('name') . ", ' ', -1)" . $collation);
+		endswitch;
+
 		$db->setQuery($query);
 		
 		return $db->loadObjectList();

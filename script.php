@@ -69,5 +69,6 @@ class mod_AZDirectoryInstallerScript
 	 */
 	function postflight($type, $parent) 
 	{
+		JFile::delete(JPATH_SITE . '/modules/mod_azdirectory/assets/jquery.clippath.min.js');
 	}
 }

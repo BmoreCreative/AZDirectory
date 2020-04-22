@@ -6,7 +6,7 @@
 	<copyright>Copyright (C) 2016 Bmore Creative, Inc. All rights reserved.</copyright>
 	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
 	<authorUrl>bmorecreativeinc.com</authorUrl>
-    <version>2.1.0</version>
+    <version>2.2.0</version>
     <description>Arrange contacts in an A-Z, directory-style layout</description>
     <files>
         <filename module="mod_azdirectory">mod_azdirectory.php</filename>
@@ -52,6 +52,18 @@
 					value_field="lastletter">
 						<option value="">None</option>
 						<option value="All">All</option>
+				</field>
+
+				<field
+					name="sortorder"
+					type="list"
+					default="ln"
+					description="MOD_AZDIRECTORY_SORTORDER_DESC"
+					label="MOD_AZDIRECTORY_SORTORDER_LABEL">
+						<option value="ln">MOD_AZDIRECTORY_SORTORDER_LN</option>
+						<option value="fn">MOD_AZDIRECTORY_SORTORDER_FN</option>
+						<option value="component">MOD_AZDIRECTORY_SORTORDER_COMPONENT</option>
+						<option value="sortfield">MOD_AZDIRECTORY_SORTORDER_SORTFIELD</option>
 				</field>
 
 				<field
@@ -127,6 +139,17 @@
 					default="1"
 					description="MOD_AZDIRECTORY_POST-ZIP_CODE_DESC"
 					label="MOD_AZDIRECTORY_POST-ZIP_CODE_LABEL">
+						<option value="1">JYES</option>
+						<option value="0">JNO</option>
+				</field>
+
+				<field
+					name="postcode_first"
+					type="radio"
+					class="btn-group"
+					default="0"
+					description="MOD_AZDIRECTORY_POST-ZIP_CODEFIRST_DESC"
+					label="MOD_AZDIRECTORY_POST-ZIP_CODEFIRST_LABEL">
 						<option value="1">JYES</option>
 						<option value="0">JNO</option>
 				</field>

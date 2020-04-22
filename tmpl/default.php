@@ -30,7 +30,7 @@ defined('_JEXEC') or die('Restricted access');
 	</ul>
 	<form name="modazdirectory__form" class="modazdirectory__form" method="post">
 		<select name="modazdirectory__select" id="modazdirectory__select">
-			<option value="">Last Name</option>
+			<option value=""><?php echo modAZDirectoryHelper::azFirstOption( $sortorder ); ?></option>
             <option value="<?php echo JUri::current(); ?>?lastletter=All#modazdirectory">All</option>
 			<?php foreach ( $azdirectory[1] as $letter ) : ?>
 			<option value="<?php echo JUri::current() . "?lastletter=" . $letter; ?>#modazdirectory"><?php echo $letter; ?></option>
@@ -79,23 +79,7 @@ defined('_JEXEC') or die('Restricted access');
                         <p><?php echo $contact->address; ?></p>
                         <?php endif; ?>
 
-                        <p>
-                            <?php if ( modAZDirectoryHelper::azVerify( 'suburb', $contact ) ) : ?>
-                            <span><?php echo $contact->suburb; ?></span>
-                            <?php endif; ?>
-                            
-                            <?php if ( ( modAZDirectoryHelper::azVerify( 'suburb', $contact ) ) && ( modAZDirectoryHelper::azVerify( 'state', $contact ) ) ) : ?>
-                            <span>, <?php echo $contact->state; ?></span>
-                            <?php else : if ( modAZDirectoryHelper::azVerify( 'state', $contact ) ) : ?>
-                            <span><?php echo $contact->state; ?></span>
-                            <?php endif; endif; ?>
-                            
-                            <?php if( ( ( modAZDirectoryHelper::azVerify( 'suburb', $contact ) ) || ( modAZDirectoryHelper::azVerify( 'state', $contact ) ) ) && modAZDirectoryHelper::azVerify( 'postcode', $contact ) == 1 ) : ?>
-                            <span> <?php echo $contact->postcode; ?></span>
-                            <?php else : if ( modAZDirectoryHelper::azVerify( 'postcode', $contact ) ) : ?>
-                            <span><?php echo $contact->postcode; ?></span>
-                            <?php endif; endif; ?>
-                        </p>
+                        <p><?php echo modAZDirectoryHelper::azFormatAddress( $contact, $postcode_first ); ?></p>
                         
                         <?php if ( modAZDirectoryHelper::azVerify( 'telephone', $contact ) ): ?>
                         <p>
