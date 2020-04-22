@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="module" version="3.0" client="site" method="upgrade">
+    <name>AZDirectory</name>
+    <author>Bmore Creative, Inc.</author>
+	<creationDate>March 2016</creationDate>
+	<copyright>Copyright (C) 2016 Bmore Creative, Inc. All rights reserved.</copyright>
+	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+	<authorUrl>bmorecreativeinc.com</authorUrl>
+    <version>1.0.0</version>
+    <description>Arrange contacts in an A-Z, directory-style layout</description>
+    <files>
+        <filename module="mod_azdirectory">mod_azdirectory.php</filename>
+        <filename>mod_azdirectory.xml</filename>
+        <filename>index.html</filename>
+        <filename>helper.php</filename>
+		<folder>assets</folder>
+		<folder>language</folder>
+		<folder>sql</folder>
+        <folder>tmpl</folder>
+    </files>
+	<languages folder="language/en-GB">
+		<language tag="en-GB">en-GB.mod_azdirectory.ini</language>
+		<language tag="en-GB">en-GB.mod_azdirectory.sys.ini</language>
+	</languages>	
+	<updateservers>
+		<server type="extension" name="Bmore Creative, Inc. Update Server" priority="1">https://joomla.bmorecreativeinc.com/extensions/mod_azdirectory_update.xml</server>
+	</updateservers>
+	<update>
+		<schemas>
+			<schemapath type="mysql">sql/mysql/updates</schemapath>
+		</schemas>
+	</update>
+	<scriptfile>script.php</scriptfile>
+    <config>
+		<fields name="params">
+			<fieldset name="basic" addfieldpath="/administrator/components/com_contact/models/fields">
+				<field name="id" type="category"
+					description="MOD_AZDIRECTORY_CATEGORY_DESC"
+					extension="com_contact"
+					label="MOD_AZDIRECTORY_CATEGORY_LABEL"
+					required="true" />
+
+				<field
+					name="show_name"
+					type="radio"
+					class="btn-group"
+					default="1"
+					description="MOD_AZDIRECTORY_NAME_DESC"
+					label="MOD_AZDIRECTORY_NAME_LABEL">
+						<option value="1">JYES</option>
+						<option value="0">JNO</option>
+				</field>
+	
+				<field
+					name="show_con_position"
+					type="radio"
+					class="btn-group"
+					default="1"
+					description="MOD_AZDIRECTORY_CONTACT_POSITION_DESC"
+					label="MOD_AZDIRECTORY_CONTACT_POSITION_LABEL">
+						<option value="1">JYES</option>
+						<option value="0">JNO</option>
+				</field>
+	
+				<field
+					name="show_email_to"
+					type="radio"
+					class="btn-group"
+					default="1"
+					description="MOD_AZDIRECTORY_CONTACT_E_MAIL_DESC"
+					label="JGLOBAL_EMAIL">
+						<option value="1">JYES</option>
+						<option value="0">JNO</option>
+				</field>
+	
+				<field
+					name="show_address"
+					type="radio"
+					class="btn-group"
+					default="1"
+					description="MOD_AZDIRECTORY_STREET_ADDRESS_DESC"
+					label="MOD_AZDIRECTORY_STREET_ADDRESS_LABEL">
+						<option value="1">JYES</option>
+						<option value="0">JNO</option>
+				</field>
+	
+				<field
+					name="show_suburb"
+					type="radio"
+					class="btn-group"
+					default="1"
+					description="MOD_AZDIRECTORY_TOWN-SUBURB_DESC"
+					label="MOD_AZDIRECTORY_TOWN-SUBURB_LABEL">
+						<option value="1">JYES</option>
+						<option value="0">JNO</option>
+				</field>
+	
+				<field
+					name="show_state"
+					type="radio"
+					class="btn-group"
+					default="1"
+					description="MOD_AZDIRECTORY_STATE-COUNTY_DESC"
+					label="MOD_AZDIRECTORY_STATE-COUNTY_LABEL">
+						<option value="1">JYES</option>
+						<option value="0">JNO</option>
+				</field>
+	
+				<field
+					name="show_postcode"
+					type="radio"
+					class="btn-group"
+					default="1"
+					description="MOD_AZDIRECTORY_POST-ZIP_CODE_DESC"
+					label="MOD_AZDIRECTORY_POST-ZIP_CODE_LABEL">
+						<option value="1">JYES</option>
+						<option value="0">JNO</option>
+				</field>
+	
+				<field
+					name="show_telephone"
+					type="radio"
+					class="btn-group"
+					default="1"
+					description="MOD_AZDIRECTORY_TELEPHONE_DESC"
+					label="MOD_AZDIRECTORY_TELEPHONE_LABEL">
+						<option value="1">JYES</option>
+						<option value="0">JNO</option>
+				</field>
+	
+				<field
+					name="show_mobile"
+					type="radio"
+					class="btn-group"
+					default="1"
+					description="MOD_AZDIRECTORY_MOBILE_DESC"
+					label="MOD_AZDIRECTORY_MOBILE_LABEL">
+						<option value="1">JYES</option>
+						<option value="0">JNO</option>
+				</field>
+	
+				<field
+					name="show_fax"
+					type="radio"
+					class="btn-group"
+					default="1"
+					description="MOD_AZDIRECTORY_FAX_DESC"
+					label="MOD_AZDIRECTORY_FAX_LABEL">
+						<option value="1">JYES</option>
+						<option value="0">JNO</option>
+				</field>
+	
+				<field
+					name="show_webpage"
+					type="radio"
+					class="btn-group"
+					default="1"
+					description="MOD_AZDIRECTORY_WEBPAGE_DESC"
+					label="MOD_AZDIRECTORY_WEBPAGE_LABEL">
+						<option value="1">JYES</option>
+						<option value="0">JNO</option>
+				</field>
+	
+				<field
+					name="show_image"
+					type="radio"
+					class="btn-group"
+					default="1"
+					description="MOD_AZDIRECTORY_IMAGE_DESC"
+					label="MOD_AZDIRECTORY_IMAGE_LABEL">
+						<option value="1">JYES</option>
+						<option value="0">JNO</option>
+				</field>
+			</fieldset>
+			<fieldset name="advanced">
+				<field
+					name="layout"
+					type="modulelayout"
+					label="JFIELD_ALT_LAYOUT_LABEL"
+					description="JFIELD_ALT_MODULE_LAYOUT_DESC" />
+				<field
+					name="moduleclass_sfx"
+					type="textarea" rows="3"
+					label="COM_MODULES_FIELD_MODULECLASS_SFX_LABEL"
+					description="COM_MODULES_FIELD_MODULECLASS_SFX_DESC" />
+			</fieldset>
+		</fields>
+    </config>
+</extension>
