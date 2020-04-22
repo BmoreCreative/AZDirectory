@@ -6,7 +6,7 @@
 	<copyright>Copyright (C) 2016 Bmore Creative, Inc. All rights reserved.</copyright>
 	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
 	<authorUrl>bmorecreativeinc.com</authorUrl>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
     <description>Arrange contacts in an A-Z, directory-style layout</description>
     <files>
         <filename module="mod_azdirectory">mod_azdirectory.php</filename>
@@ -64,7 +64,18 @@
 						<option value="1">JYES</option>
 						<option value="0">JNO</option>
 				</field>
-	
+				
+				<field
+					name="lastname_first"
+					type="radio"
+					class="btn-group"
+					default="0"
+					description="MOD_AZDIRECTORY_LASTNAMEFIRST_DESC"
+					label="MOD_AZDIRECTORY_LASTNAMEFIRST_LABEL">
+						<option value="1">JYES</option>
+						<option value="0">JNO</option>
+				</field>
+
 				<field
 					name="show_con_position"
 					type="radio"

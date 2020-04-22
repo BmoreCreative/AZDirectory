@@ -61,8 +61,8 @@ defined('_JEXEC') or die('Restricted access');
                     <?php endif; endif; ?>
 
                     <div>
-                        <?php if ( modAZDirectoryHelper::azVerify( 'name', $contact ) ): ?>
-                        <h3><?php echo $contact->name; ?></h3>
+                        <?php if ( modAZDirectoryHelper::azVerify( 'name', $contact ) ): ?>						
+                        <h3><?php echo modAZDirectoryHelper::azFormatName($contact->name, $lastname_first); ?></h3>
                         <?php endif; ?>
 
                         <?php if ( modAZDirectoryHelper::azVerify( 'con_position', $contact ) ): ?>

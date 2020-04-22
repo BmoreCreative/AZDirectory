@@ -70,9 +70,8 @@ class modAZDirectoryHelper
 		
 		// get module parameters
 		$module = JModuleHelper::getModule('azdirectory');
-		$params = new JRegistry();
-		$params->loadString($module->params);
-
+		$modparams = new JRegistry($module->params);
+		
 		// create an instance
 		$return = new stdClass();
 		
@@ -90,7 +89,7 @@ class modAZDirectoryHelper
 		endif;
 			
 		$query
-			->where($db->quoteName('catid') . ' = ' . $params->get('id'))
+			->where($db->quoteName('catid') . ' = ' . $modparams->get('id'))
 			->where($db->quoteName('published') . ' = 1')
 			->order("SUBSTRING_INDEX(" . $db->quoteName('name') . ", ' ', -1)");
 	
@@ -99,7 +98,7 @@ class modAZDirectoryHelper
 		
 		$return->data = array();
 		$return->data['json_array'] = $rows;
-		$return->data['mod_params'] = $params;
+		$return->data['mod_params'] = json_decode( $modparams );
 		
 		// get JUri::base for the full path to the contact image in Javascript
 		$return->data['juri_base'] = JUri::base();
@@ -152,8 +151,7 @@ class modAZDirectoryHelper
 	public static function azVerify($key, $values){
 		// get module parameters
 		$module = JModuleHelper::getModule('azdirectory');
-		$params = new JRegistry();
-		$params->loadString($module->params);
+		$params = new JRegistry($module->params);
 	
 		$param = $params->get('show_' . $key);
 		$value = $values->$key;
@@ -165,7 +163,22 @@ class modAZDirectoryHelper
 	 *
 	 * @access    public
 	 */	
-	 public static function submit( $azoption ){
+	 public static function submit($azoption){
 		header( 'Location: ' . $azoption );		 
 	 }
+
+	/**
+	 * Method to format name
+	 *
+	 * @access    public
+	 */	
+	public static function azFormatName($name, $lastnameFirst){
+		if( $lastnameFirst == 1 ) :
+			$nameparts = explode( " ", $name );
+			$lastname = array_pop( $nameparts );
+			$firstname = implode( " ", $nameparts );
+			$name = $lastname . ", " . $firstname;
+		endif;
+		return $name;
+	}
 }

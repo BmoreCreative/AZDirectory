@@ -27,12 +27,14 @@ $azdirectory = modAZDirectoryHelper::getAZDirectory($params);
 if( !is_null( $jinput->get('lastletter') ) ) :
 	$lastletter = $jinput->get('lastletter');
 	$show_image = $params->get('show_image');
+	$lastname_first = $params->get('lastname_first');
 	$contacts =  modAZDirectoryHelper::getContactsNoAjax( $lastletter, $params );
 else :
 // handle configured last letter
 	if( $default_lastletter != '' ) :
 		$lastletter = $default_lastletter;
 		$show_image = $params->get('show_image');
+		$lastname_first = $params->get('lastname_first');
 		$contacts =  modAZDirectoryHelper::getContactsNoAjax( $lastletter, $params );
 	endif;
 endif;

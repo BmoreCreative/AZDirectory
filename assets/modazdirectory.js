@@ -73,7 +73,13 @@ var azRequest = function( letter ) {
 			
 			var contact = jQuery( '<div/>' );
 			
-			showContact( params, 'name', 'h3', v, contact );
+			if( ( azVerify( params, 'name', v ) == 1 ) && ( params['lastname_first'] == 1 ) ) {
+				jQuery( '<h3>' )
+					.text( azFormatName( v['name'] ) )
+					.appendTo( contact );
+			} else {
+				showContact( params, 'name', 'h3', v, contact );
+			}
 			
 			showContact( params, 'con_position', 'p', v, contact );
 			
@@ -153,4 +159,12 @@ var showContact = function( params, key, tag, value, parent, label ) {
 
 var azVerify = function( params, key, value ) {
 	return ( ( params['show_' + key] == 1 ) && ( value[key] ) ) ? 1 : 0;
+};
+
+var azFormatName = function( name ){
+	nameparts = name.split( " " );
+	lastname = nameparts.pop();
+	firstname = nameparts.join( " " );
+	name = lastname + ", " + firstname;
+	return name;
 };
