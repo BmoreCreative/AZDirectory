@@ -149,6 +149,7 @@ defined('_JEXEC') or die('Restricted access');
                         </p>
                         <?php endif; ?>
                     </div>
+                    <?php $counter++ ?>
                 </div> <!-- /modazdirectory__result -->
 
                 <?php if ( ( $rowcount == 2 ) or ( $counter == $contactcount ) ) : ?>
