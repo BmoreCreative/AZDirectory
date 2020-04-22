@@ -20,7 +20,7 @@ $modAZAssetsPath = JUri::base() . 'modules/' . $module->module . '/assets/';
 // process form submission
 if( $jinput->get( 'modazdirectory__select' ) ) :
 	JSession::checkToken() or die( 'Invalid Token' );
-	$az->submit( $jinput->get( 'modazdirectory__select', '', STRING ) );
+	$az->submit( $jinput->get( 'modazdirectory__select', '', 'STRING' ) );
 endif;
 
 // get parameters specific to the module configuration
@@ -36,7 +36,7 @@ $azdirectory = $az->getAZDirectory();
 
 // handle lastletter parameter in the URL
 if( !is_null( $jinput->get( 'lastletter' ) ) ) :
-	$lastletter = $jinput->get( 'lastletter', '', STRING );
+	$lastletter = $jinput->get( 'lastletter', '', 'STRING' );
 	$contacts = $az->getContactsNoAjax( $lastletter );
 else :
 // handle configured last letter

@@ -101,7 +101,7 @@ class modAZDirectoryHelper
 		$query
 			->where( $db->quoteName( 'published' ) . ' = 1' )
 			->order( $db->quoteName( 'letter' ) );
-
+		
 		$db->setQuery( $query );
 		$rows = $db->loadAssocList( 'letter' );
 		$letters = array_keys( $rows );
@@ -142,7 +142,7 @@ class modAZDirectoryHelper
 		$catid = $params->get( 'id' );
 		$sortorder = $params->get( 'sortorder' );
 		
-		$az = self::azInstance( $params );
+		$az = self::azInstance( $params, $module->id );
 		$modAZAssetsPath = JUri::base() . 'modules/' . $module->module . '/assets/';
 		
 		// set collation
@@ -278,8 +278,10 @@ class modAZDirectoryHelper
 	 * @access    public
 	 */	
 	public function azFormatAddress( $contact, $postcodeFirst ){
-		$lines = array();
 		if ( $this->azVerify( 'suburb', $contact ) || $this->azVerify( 'state', $contact ) || $this->azVerify( 'postcode', $contact ) ) :
+			
+			$lines = array();
+			
 			if ( $postcodeFirst == 1 ) :
 				// international address format
 				$line = array();
@@ -296,10 +298,13 @@ class modAZDirectoryHelper
 				if ( $this->azVerify( 'postcode', $contact ) ) $line[] = '<span>' . $contact->postcode . '</span>';
 				$lines[] = implode( ' ', $line );	
 			endif;
+		
+			return $lines[0];
+		
 		endif;
 		
-		return $lines[0];
-	}	
+		return "";
+	}
 
 	/**
 	 * Method to get the default option for the select option
@@ -357,11 +362,7 @@ class modAZDirectoryHelper
 		if( !empty( $catid[0] ) ) :
 			$query->where( $db->quoteName( 'catid' ) . ' IN ( ' . implode( ',', $catid ) . ' )' );
 		endif;
-		/*
-		if( $catid ) :
-			$query->where( $db->quoteName( 'catid' ) . ' = ' . $catid );
-		endif;
-		*/
+
 		$query->where($db->quoteName( 'published' ) . ' = 1' );
 		
 		// set the sort order
