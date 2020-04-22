@@ -1,17 +1,34 @@
 jQuery( document ).ready( function( $ ) {	
 	// trigger selection
 	$( '#modazdirectory__select' ).on( 'change', function( e ) {
-		azRequest( $( this ).find( 'option:selected' ).text() )
+		var azLetter = $( this ).find( 'option:selected' ).text();
+		azRequest( azLetter );
+		azPush( azLetter );
 	});
 	
 	// trigger click
 	$( '.modazdirectory__link' ).on( 'click', function( e ) {
 		e.preventDefault();
-		azRequest( this.rel );
+		var azLetter = this.rel;
+		azRequest( azLetter );
+		azPush( azLetter );
 	});
 });
 
+var azPush = function( letter ) {
+	// history API
+	if( window.history && history.pushState ) {
+		var azURL = '?lastletter=' + letter + '#modazdirectory';
+		history.pushState( letter, '', azURL );
+	}
+}
+
+window.addEventListener('popstate', function( e ) {
+	if( e.state !== null ) azRequest( e.state );
+});
+
 var azRequest = function( letter ) {
+	// Joomla Ajax request/call
 	var request = {
 		'option'	:	'com_ajax',
 		'module'	:	'azdirectory',
