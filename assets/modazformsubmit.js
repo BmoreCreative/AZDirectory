@@ -1,0 +1,1 @@
+jQuery(document).ready(function(){jQuery("#modazdirectory__select").on("change",function(){this.form.submit()})});

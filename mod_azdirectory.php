@@ -18,14 +18,18 @@ $jinput = JFactory::getApplication()->input;
 $modAZAssetsPath = JUri::base() . 'modules/' . $module->module . '/assets/';
 
 // process form submission
-if( $jinput->get( 'modazdirectory__submit' ) ) :
+if( $jinput->get( 'modazdirectory__select' ) ) :
+	JSession::checkToken() or die( 'Invalid Token' );
 	$az->submit( $jinput->get( 'modazdirectory__select', '', STRING ) );
 endif;
 
 // get parameters specific to the module configuration
 // e.g. $show_image = $params->get('show_image');
+// NOTE: id (category IDs) is an array, so a variable is not created and not used in default.php
 foreach ( $params as $key => $value ):
-	$$key = htmlspecialchars( $value );
+	if( is_string( $value ) ) :
+		$$key = htmlspecialchars( $value );
+	endif;
 endforeach;
 
 $azdirectory = $az->getAZDirectory();

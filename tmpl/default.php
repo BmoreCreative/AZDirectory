@@ -42,6 +42,7 @@ defined('_JEXEC') or die('Restricted access');
 				<?php endforeach; ?>
 			</select>
 			<noscript><input type="submit" name="modazdirectory__submit" id="modazdirectory__submit" value="Submit" /></noscript>
+			<?php echo JHtml::_( 'form.token' ); ?>
 		</form>
 	<?php endif; ?>
     <div class="modazdirectory__results">
@@ -224,4 +225,4 @@ defined('_JEXEC') or die('Restricted access');
 	</div> <!-- /modazdirectory__modal -->
 	<?php endif; ?>
 
-</div> <!-- /modazdirectory -->
+</div>

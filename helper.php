@@ -10,6 +10,7 @@
 
 // no direct access
 defined( '_JEXEC' ) or die( 'Restricted access' );
+define( 'MODAZPATH', 'modules/mod_azdirectory/assets/' );
 
 class modAZDirectoryHelper
 {
@@ -40,13 +41,13 @@ class modAZDirectoryHelper
     public function getAZDirectory()
     {
 		$doc = JFactory::getDocument();
-
+		
 		$nameHyperlink = $this->params->get( 'name_hyperlink' );
 
 		if( $nameHyperlink == 1 ) :
 			// load standard Bootstrap and custom Bootstrap styles
 			JHtml::_( 'bootstrap.framework' );
-			$doc->addStyleSheet( 'modules/mod_azdirectory/assets/modazbootstrap.css' );
+			$doc->addStyleSheet( MODAZPATH . 'modazbootstrap.css' );
 			// get Display Format for Contacts
 			$display_format = JComponentHelper::getParams( 'com_contact' )->get( 'presentation_style' );
 			$doc->addScriptDeclaration('var modazModalStyle={"displayFormat":"' . $display_format . '"};');
@@ -59,9 +60,16 @@ class modAZDirectoryHelper
 		$doc->addScriptDeclaration('var modazNameHyperlink=' . $nameHyperlink . ';');
 		
 		// load standard assets
-		$doc->addStyleSheet( 'modules/mod_azdirectory/assets/modazdirectory.css' );
-		$doc->addScript( 'modules/mod_azdirectory/assets/modazdirectory.js' );
-		$doc->addScript( 'modules/mod_azdirectory/assets/svgxuse.min.js', 'text/javascript', true, false );
+		$doc->addStyleSheet( MODAZPATH . 'modazdirectory.css' );
+
+		$loadJS = $this->params->get( 'loadjs' );
+		if( $loadJS == 1 ) :
+			$doc->addScript( MODAZPATH . 'modazdirectory.js' );
+		else :
+			$doc->addScript( MODAZPATH . 'modazformsubmit.js' );
+		endif;
+
+		$doc->addScript( MODAZPATH . 'svgxuse.min.js', 'text/javascript', true, false );
 
 		// access database object
 		$db = JFactory::getDbo();
@@ -85,8 +93,9 @@ class modAZDirectoryHelper
 		
 		$query->from( $db->quoteName( '#__contact_details' ) );
 		
-		if( $this->params->get( 'id' ) ) :
-			$query->where( $db->quoteName( 'catid' ) . ' = ' . $this->params->get( 'id' ) );
+		$catid = $this->params->get( 'id' );
+		if( !empty( $catid[0] ) ) :
+			$query->where( $db->quoteName( 'catid' ) . ' IN ( ' . implode( ',', $catid ) . ' )' );
 		endif;
 		
 		$query
@@ -143,8 +152,12 @@ class modAZDirectoryHelper
 		$contacts = $az->_azGenerateQuery( $collation, $lastletter, $catid, $sortorder );
 
 		// get parameters specific to the module configuration
-		foreach( $params as $key => $value ) :
-			$$key = htmlspecialchars( $value );
+		// e.g. $show_image = $params->get('show_image');
+		// NOTE: id (category IDs) is an array, so a variable is not created and not used in default.php
+		foreach ( $params as $key => $value ):
+			if( is_string( $value ) ) :
+				$$key = htmlspecialchars( $value );
+			endif;
 		endforeach;
 		
 		$azdirectory = $az->getAZDirectory();
@@ -318,11 +331,15 @@ class modAZDirectoryHelper
 				$query->where( "LEFT(SUBSTRING_INDEX(" . $db->quoteName( 'name' ) . ", ' ', -1), 1)" . $collation . " = '" . $letter . "'" );
 			endif;
 		endif;
-		
+
+		if( !empty( $catid[0] ) ) :
+			$query->where( $db->quoteName( 'catid' ) . ' IN ( ' . implode( ',', $catid ) . ' )' );
+		endif;
+		/*
 		if( $catid ) :
 			$query->where( $db->quoteName( 'catid' ) . ' = ' . $catid );
 		endif;
-			
+		*/
 		$query->where($db->quoteName( 'published' ) . ' = 1' );
 		
 		// set the sort order
