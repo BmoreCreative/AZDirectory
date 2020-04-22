@@ -6,7 +6,7 @@
 	<copyright>Copyright (C) 2016 Bmore Creative, Inc. All rights reserved.</copyright>
 	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
 	<authorUrl>bmorecreativeinc.com</authorUrl>
-    <version>5.2.0</version>
+    <version>5.3.0</version>
     <description>Arrange contacts in an A-Z, directory-style layout</description>
     <files>
         <filename module="mod_azdirectory">mod_azdirectory.php</filename>
@@ -90,6 +90,7 @@
 					type="radio"
 					class="btn-group btn-group-yesno"
 					default="0"
+					showon="show_name:1"
 					description="MOD_AZDIRECTORY_LASTNAMEFIRST_DESC"
 					label="MOD_AZDIRECTORY_LASTNAMEFIRST_LABEL">
 						<option value="1">JYES</option>
@@ -101,6 +102,7 @@
 					type="radio"
 					class="btn-group btn-group-yesno"
 					default="0"
+					showon="show_name:1"
 					description="MOD_AZDIRECTORY_NAME_HYPERLINK_DESC"
 					label="MOD_AZDIRECTORY_NAME_HYPERLINK_LABEL">
 						<option value="1">JYES</option>
@@ -172,12 +174,36 @@
 					type="radio"
 					class="btn-group btn-group-yesno"
 					default="0"
+					showon="show_postcode:1"
 					description="MOD_AZDIRECTORY_POST-ZIP_CODEFIRST_DESC"
 					label="MOD_AZDIRECTORY_POST-ZIP_CODEFIRST_LABEL">
 						<option value="1">JYES</option>
 						<option value="0">JNO</option>
 				</field>
-									
+				
+				<field
+					name="show_misc"
+					type="radio"
+					class="btn-group btn-group-yesno"
+					default="0"
+					description="MOD_AZDIRECTORY_MISC_DESC"
+					label="MOD_AZDIRECTORY_MISC_LABEL">
+						<option value="1">JYES</option>
+						<option value="0">JNO</option>
+				</field>
+
+				<field
+					name="misc_layout"
+					type="radio"
+					class="btn-group btn-group-yesno"
+					default="0"
+					showon="show_misc:1"
+					description="MOD_AZDIRECTORY_MISC_LAYOUT_DESC"
+					label="MOD_AZDIRECTORY_MISC_LAYOUT_LABEL">
+						<option value="1">JYES</option>
+						<option value="0">JNO</option>
+				</field>
+						
 				<field
 					type="spacer"
 					name="spacer_alphabet"
@@ -214,6 +240,7 @@
 					name="category_label"
 					type="text"
 					default="Category: "
+					showon="show_category:1"
 					description="MOD_AZDIRECTORY_CATEGORY_LABEL_DESC"
 					label="MOD_AZDIRECTORY_CATEGORY_LABEL_LABEL" />
 				
@@ -238,6 +265,7 @@
 					type="radio"
 					class="btn-group btn-group-yesno"
 					default="0"
+					showon="show_telephone:1"
 					description="MOD_AZDIRECTORY_TELEPHONE_ICON_DESC"
 					label="MOD_AZDIRECTORY_TELEPHONE_ICON_LABEL">
 						<option value="1">JYES</option>
@@ -248,6 +276,7 @@
 					name="telephone_label"
 					type="text"
 					default="t: "
+					showon="show_telephone:1"
 					description="MOD_AZDIRECTORY_TELEPHONE_LABEL_DESC"
 					label="MOD_AZDIRECTORY_TELEPHONE_LABEL_LABEL" />
 				
@@ -256,6 +285,7 @@
 					type="radio"
 					class="btn-group btn-group-yesno"
 					default="0"
+					showon="show_telephone:1"
 					description="MOD_AZDIRECTORY_TELEPHONE_HYPERLINK_DESC"
 					label="MOD_AZDIRECTORY_TELEPHONE_HYPERLINK_LABEL">
 						<option value="1">JYES</option>
@@ -283,6 +313,7 @@
 					type="radio"
 					class="btn-group btn-group-yesno"
 					default="0"
+					showon="show_mobile:1"
 					description="MOD_AZDIRECTORY_MOBILE_ICON_DESC"
 					label="MOD_AZDIRECTORY_MOBILE_ICON_LABEL">
 						<option value="1">JYES</option>
@@ -293,6 +324,7 @@
 					name="mobile_label"
 					type="text"
 					default="m: "
+					showon="show_mobile:1"
 					description="MOD_AZDIRECTORY_MOBILE_LABEL_DESC"
 					label="MOD_AZDIRECTORY_MOBILE_LABEL_LABEL" />
 
@@ -301,6 +333,7 @@
 					type="radio"
 					class="btn-group btn-group-yesno"
 					default="0"
+					showon="show_mobile:1"
 					description="MOD_AZDIRECTORY_MOBILE_HYPERLINK_DESC"
 					label="MOD_AZDIRECTORY_MOBILE_HYPERLINK_LABEL">
 						<option value="1">JYES</option>
@@ -328,6 +361,7 @@
 					type="radio"
 					class="btn-group btn-group-yesno"
 					default="0"
+					showon="show_fax:1"
 					description="MOD_AZDIRECTORY_FAX_ICON_DESC"
 					label="MOD_AZDIRECTORY_FAX_ICON_LABEL">
 						<option value="1">JYES</option>
@@ -338,6 +372,7 @@
 					name="fax_label"
 					type="text"
 					default="f: "
+					showon="show_fax:1"
 					description="MOD_AZDIRECTORY_FAX_LABEL_DESC"
 					label="MOD_AZDIRECTORY_FAX_LABEL_LABEL" />
 
@@ -346,6 +381,7 @@
 					type="radio"
 					class="btn-group btn-group-yesno"
 					default="0"
+					showon="show_fax:1"
 					description="MOD_AZDIRECTORY_FAXHYPERLINK_DESC"
 					label="MOD_AZDIRECTORY_FAX_HYPERLINK_LABEL">
 						<option value="1">JYES</option>
@@ -373,6 +409,7 @@
 					type="radio"
 					class="btn-group btn-group-yesno"
 					default="0"
+					showon="show_email_to:1"
 					description="MOD_AZDIRECTORY_CONTACT_E_MAIL_ICON_DESC"
 					label="MOD_AZDIRECTORY_CONTACT_E_MAIL_ICON_LABEL">
 						<option value="1">JYES</option>
@@ -384,6 +421,7 @@
 					type="radio"
 					class="btn-group btn-group-yesno"
 					default="0"
+					showon="show_email_to:1"
 					description="MOD_AZDIRECTORY_CONTACT_E_MAIL_HYPERLINK_DESC"
 					label="MOD_AZDIRECTORY_CONTACT_E_MAIL_HYPERLINK_LABEL">
 						<option value="1">JYES</option>
@@ -411,6 +449,7 @@
 					type="radio"
 					class="btn-group btn-group-yesno"
 					default="0"
+					showon="show_webpage:1"
 					description="MOD_AZDIRECTORY_WEBPAGE_ICON_DESC"
 					label="MOD_AZDIRECTORY_WEBPAGE_ICON_LABEL">
 						<option value="1">JYES</option>
@@ -422,6 +461,7 @@
 					type="radio"
 					class="btn-group btn-group-yesno"
 					default="0"
+					showon="show_webpage:1"
 					description="MOD_AZDIRECTORY_WEBPAGE_HYPERLINK_DESC"
 					label="MOD_AZDIRECTORY_WEBPAGE_HYPERLINK_LABEL">
 						<option value="1">JYES</option>

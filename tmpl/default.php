@@ -64,8 +64,8 @@ defined('_JEXEC') or die('Restricted access');
                 	<?php $row = $counter / 2; ?>
             		<div class="modazdirectory__row">
               	<?php endif; ?>
-				
-				<div class="modazdirectory__result">
+
+				<div class="modazdirectory__result modazdirectory__layout-misc_<?php echo ( ( $misc_layout == 1 ) ? 'on' : 'off' ); ?>">
                     <?php if ( $show_image == 1 ) : ?>
 						<?php if ( empty( $contact->image ) ) : ?>
                         <span class="modazdirectory__glyph-camera">
@@ -199,6 +199,13 @@ defined('_JEXEC') or die('Restricted access');
                             <?php endif; ?>
                         </p>
                         <?php endif; ?>
+						
+                        <?php if ( $az->azVerify( 'misc', $contact ) ): ?>
+						<blockquote>
+                        <?php echo $contact->misc; ?>
+						</blockquote>
+                        <?php endif; ?>
+						
                     </div>
                     <?php $counter++ ?>
                 </div> <!-- /modazdirectory__result -->
