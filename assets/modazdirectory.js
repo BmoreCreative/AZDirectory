@@ -21,7 +21,7 @@ var azPush = function( letter ) {
 		var azURL = '?lastletter=' + letter + '#modazdirectory';
 		history.pushState( letter, '', azURL );
 	}
-}
+};
 
 window.addEventListener('popstate', function( e ) {
 	if( e.state !== null ) azRequest( e.state );
@@ -125,10 +125,10 @@ var azRequest = function( letter ) {
 		});
 		
 		// broken image handling
-		jQuery( 'img.modazdirectory__image' ).error( function () {
+		jQuery( 'img.modazdirectory__image' ).on( 'error', function () {
 			var iconCamera = jQuery( '<span>' ).addClass( 'modazdirectory__icon-camera' );
 			jQuery( this ).replaceWith( iconCamera );
-		})
+		});
 
 		// console.log( msg );
 	});
