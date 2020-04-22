@@ -16,13 +16,11 @@ defined('_JEXEC') or die('Restricted access');
 	<a name="modazdirectory"></a>
 	<?php if( $show_alphabet == 1 ) : ?>
 		<ul class="modazdirectory__list">
-			<?php if( $show_all_option == 1 ) : ?>
 			<li class="modazdirectory__listitem-all">
 				<a class="modazdirectory__link" href="<?php echo JUri::current(); ?>?lastletter=<?php echo JText::_('JALL'); ?>#modazdirectory" rel="<?php echo JText::_('JALL'); ?>">
 					<?php echo JText::_('JALL'); ?>
 				</a>
 			</li>
-			<?php endif; ?>
 			<?php
 			foreach ( $azdirectory[0] as $letter ) : 
 				if ( in_array( $letter, $azdirectory[1] ) ) : ?>
@@ -38,9 +36,7 @@ defined('_JEXEC') or die('Restricted access');
 		<form name="modazdirectory__form" class="modazdirectory__form" method="post">
 			<select name="modazdirectory__select" id="modazdirectory__select">
 				<option value=""><?php echo modAZDirectoryHelper::azFirstOption( $sortorder ); ?></option>
-				<?php if( $show_all_option == 1 ) : ?>
 				<option value="<?php echo JUri::current(); ?>?lastletter=<?php echo JText::_('JALL'); ?>#modazdirectory"><?php echo JText::_('JALL'); ?></option>
-				<?php endif; ?>	
 				<?php foreach ( $azdirectory[1] as $letter ) : ?>
 				<option value="<?php echo JUri::current() . "?lastletter=" . $letter; ?>#modazdirectory"><?php echo $letter; ?></option>
 				<?php endforeach; ?>
@@ -49,9 +45,11 @@ defined('_JEXEC') or die('Restricted access');
 		</form>
 	<?php endif; ?>
     <div class="modazdirectory__results">
-		<?php if ( $lastletter ) : ?>
-        <h1><?php echo $lastletter; ?></h1>
-        <?php endif; ?>
+		<?php if ( $show_alphabet == 1 ) : ?>
+			<?php if ( $lastletter ) : ?>
+			<h1><?php echo $lastletter; ?></h1>
+			<?php endif; ?>
+		<?php endif; ?>
 		
         <?php
 		$contactcount = count( $contacts );
