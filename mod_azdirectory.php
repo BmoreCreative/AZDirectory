@@ -15,6 +15,7 @@ require_once dirname(__FILE__) . '/helper.php';
 $az = modAZDirectoryHelper::azInstance( $params );
 
 $jinput = JFactory::getApplication()->input;
+$modAZAssetsPath = JUri::base() . 'modules/' . $module->module . '/assets/';
 
 // process form submission
 if( $jinput->get( 'modazdirectory__submit' ) ) :

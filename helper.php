@@ -46,6 +46,7 @@ class modAZDirectoryHelper
 		// load Javascript after jQuery
 		JHtml::_( 'jquery.framework' );
 		$doc->addScript( 'modules/mod_azdirectory/assets/modazdirectory.js' );
+		$doc->addScript( 'modules/mod_azdirectory/assets/svgxuse.min.js', 'text/javascript', true, false );
 
 		// access database object
 		$db = JFactory::getDbo();
@@ -118,6 +119,7 @@ class modAZDirectoryHelper
 		$sortorder = $params->get( 'sortorder' );
 		
 		$az = self::azInstance( $params );
+		$modAZAssetsPath = JUri::base() . 'modules/' . $module->module . '/assets/';
 		
 		// set collation
 		$collation = ( $params->get( 'swedish' ) == 1 ) ? $az->_azGetCollation() : "";
@@ -134,15 +136,9 @@ class modAZDirectoryHelper
 		
 		ob_clean();
 		ob_start();
-
-		$template = $app->getTemplate();
-		$filename = JPATH_THEMES.'/'.$template.'/html/mod_azdirectory/default.php';
 		
-		if( file_exists( $filename ) ) :
-			require_once $filename;
-		else :
-			require_once dirname(__FILE__) . '/tmpl/default.php';
-		endif;
+		// checks for layout override first, then checks for original
+		require_once JModuleHelper::getLayoutPath( 'mod_azdirectory' );
 
 		ob_get_contents();
 

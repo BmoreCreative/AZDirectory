@@ -69,13 +69,17 @@ defined('_JEXEC') or die('Restricted access');
                     $contactImage =  JUri::base() . $contact->image;
                     $image_attrs = getimagesize( $contactImage );
                     if( empty( $image_attrs ) ) : ?>
-                    <span class="modazdirectory__icon-camera"> </span>
+					<span class="modazdirectory__glyph-camera">
+						<svg class="modazdirectory__icon">
+							<use xlink:href="<?php echo JUri::base() . 'modules/' . $module->module; ?>/assets/symbol-defs.svg#icon-camera"></use>
+						</svg>
+					</span>
                     <?php else : ?>
                     <img src="<?php echo $contactImage; ?>" alt="<?php echo $contact->name; ?>" class="modazdirectory__image" />
                     <?php endif; endif; ?>
 
                     <div>
-                        <?php if ( $az->azVerify( 'name', $contact ) ): ?>						
+                        <?php if ( $az->azVerify( 'name', $contact ) ): ?>					
                         <h3><?php echo $az->azFormatName($contact->name, $lastname_first); ?></h3>
                         <?php endif; ?>
 
@@ -92,7 +96,11 @@ defined('_JEXEC') or die('Restricted access');
                         <?php if ( $az->azVerify( 'telephone', $contact ) ): ?>
                         <p>
 							<?php if ( $show_telephone_icon ) : ?>
-                            <span class="modazdirectory__icon-phone"></span>
+							<span class="modazdirectory__glyph">
+								<svg class="modazdirectory__icon">
+									<use xlink:href="<?php echo $modAZAssetsPath; ?>symbol-defs.svg#icon-phone"></use>
+								</svg>
+							</span>
                             <?php endif; ?>
                             <span class="modazdirectory__label-phone"><?php echo $telephone_label; ?></span>
 							<?php if ( $telephone_hyperlink ) : ?>
@@ -106,7 +114,11 @@ defined('_JEXEC') or die('Restricted access');
                         <?php if ( $az->azVerify( 'mobile', $contact ) ) : ?>
                         <p>
 							<?php if ( $show_mobile_icon ) : ?>
-                            <span class="modazdirectory__icon-mobile"></span>
+							<span class="modazdirectory__glyph">
+								<svg class="modazdirectory__icon">
+									<use xlink:href="<?php echo JUri::base() . 'modules/' . $module->module; ?>/assets/symbol-defs.svg#icon-mobile"></use>
+								</svg>
+							</span>
                             <?php endif; ?>
                             <span class="modazdirectory__label-mobile"><?php echo $mobile_label; ?></span>
 							<?php if ( $mobile_hyperlink ) : ?>
@@ -120,7 +132,11 @@ defined('_JEXEC') or die('Restricted access');
                         <?php if ( $az->azVerify( 'fax', $contact ) ) : ?>
                         <p>
 							<?php if ( $show_fax_icon ) : ?>
-                            <span class="modazdirectory__icon-fax"></span>
+							<span class="modazdirectory__glyph">
+								<svg class="modazdirectory__icon">
+									<use xlink:href="<?php echo JUri::base() . 'modules/' . $module->module; ?>/assets/symbol-defs.svg#icon-fax"></use>
+								</svg>
+							</span>
                             <?php endif; ?>
                             <span class="modazdirectory__label-fax"><?php echo $fax_label; ?></span>
 							<?php if ( $fax_hyperlink ) : ?>
@@ -132,9 +148,13 @@ defined('_JEXEC') or die('Restricted access');
                         <?php endif; ?>
 
                         <?php if ( $az->azVerify( 'email_to', $contact ) ) : ?>
-                        <p>
+                        <p class="modazdirectory__nowrap">
 							<?php if ( $show_email_to_icon ) : ?>
-                            <span class="modazdirectory__icon-email_to"></span>
+							<span class="modazdirectory__glyph">
+								<svg class="modazdirectory__icon">
+									<use xlink:href="<?php echo JUri::base() . 'modules/' . $module->module; ?>/assets/symbol-defs.svg#icon-envelope"></use>
+								</svg>
+							</span>
                             <?php endif; ?>
                             <?php if ( $email_to_hyperlink ) : ?>
                             <?php echo JHtml::_( 'email.cloak', $contact->email_to, 1 ); ?>
@@ -145,9 +165,13 @@ defined('_JEXEC') or die('Restricted access');
                         <?php endif; ?>
                         
                         <?php if ( $az->azVerify( 'webpage', $contact ) ) : ?>
-                        <p>
+                        <p class="modazdirectory__nowrap">
 							<?php if ( $show_webpage_icon ) : ?>
-                            <span class="modazdirectory__icon-webpage"></span>
+							<span class="modazdirectory__glyph">
+								<svg class="modazdirectory__icon">
+									<use xlink:href="<?php echo JUri::base() . 'modules/' . $module->module; ?>/assets/symbol-defs.svg#icon-sphere"></use>
+								</svg>
+							</span>
                             <?php endif; ?>
                             <?php if ( $webpage_hyperlink ) : ?>
                             <a href="<?php echo $az->azSanitizeURL( $contact->webpage ); ?>" target="_blank" rel="noopener"><?php echo $contact->webpage; ?></a> 
