@@ -63,8 +63,8 @@ defined('_JEXEC') or die('Restricted access');
                 	<?php $row = $counter / 2; ?>
             		<div class="modazdirectory__row">
               	<?php endif; ?>
-
-                <div class="modazdirectory__result">
+				
+				<div class="modazdirectory__result">
                     <?php if ( $show_image == 1 ) :
 					$contactImage =  JUri::base() . $contact->image;
 					if ( @exif_imagetype( $contactImage ) ) : ?>
@@ -78,8 +78,21 @@ defined('_JEXEC') or die('Restricted access');
                     <?php endif; endif; ?>
 
                     <div>
-                        <?php if ( $az->azVerify( 'name', $contact ) ): ?>					
-                        <h3><?php echo $az->azFormatName($contact->name, $lastname_first); ?></h3>
+                        <?php if ( $az->azVerify( 'name', $contact ) ): ?>
+						<?php if ( $name_hyperlink ) : ?>
+                        <h3>
+							<a
+							href="<?php echo JUri::base(); ?>index.php?option=com_contact&view=contact&id=<?php echo $contact->id; ?>" 
+							data-toggle="modal" 
+							data-target="#modazdirectory__modal" 
+							data-remote="<?php echo JUri::base(); ?>index.php?option=com_contact&view=contact&tmpl=component&id=<?php echo $contact->id; ?>
+							">
+								<?php echo $az->azFormatName($contact->name, $lastname_first); ?>
+							</a>
+						</h3>
+						<?php else : ?>
+						<h3><?php echo $az->azFormatName($contact->name, $lastname_first); ?></h3>
+						<?php endif; ?>
                         <?php endif; ?>
 
                         <?php if ( $az->azVerify( 'con_position', $contact ) ): ?>
@@ -190,4 +203,26 @@ defined('_JEXEC') or die('Restricted access');
    		<?php endif; ?>
 
     </div> <!-- /modazdirectory__results -->
+
+	<?php if ( $name_hyperlink ) : ?>
+	<div id="modazdirectory__modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modazdirectory__label">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="<?php echo JText::_('MOD_AZDIRECTORY_MODAL_CLOSE'); ?>">
+						<span  aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="modazdirectory__label"><?php echo JText::_('MOD_AZDIRECTORY_MODAL_CONTACT_DETAILS'); ?></h4>
+				</div>
+				<div class="modal-body" id="modazdirectory__modal-body">
+					<div class="modal-spinner"></div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal"><?php echo JText::_('MOD_AZDIRECTORY_MODAL_CLOSE'); ?></button>
+				</div>
+			</div> <!-- /modal-content --> 
+		</div> <!-- /modal-dialog -->
+	</div> <!-- /modazdirectory__modal -->
+	<?php endif; ?>
+
 </div> <!-- /modazdirectory -->

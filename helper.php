@@ -39,12 +39,24 @@ class modAZDirectoryHelper
 	// get module parameters
     public function getAZDirectory()
     {
-		// load stylesheet
 		$doc = JFactory::getDocument();
-		$doc->addStyleSheet( 'modules/mod_azdirectory/assets/modazdirectory.css' );
+
+		if( $this->params->get( 'name_hyperlink' ) == 1 ) :
+			// load standard Bootstrap and custom Bootstrap styles
+			JHtml::_( 'bootstrap.framework' );
+			$doc->addStyleSheet( 'modules/mod_azdirectory/assets/modazbootstrap.css' );
+			// get Display Format for Contacts
+			$display_format = JComponentHelper::getParams( 'com_contact' )->get( 'presentation_style' );
+			$doc->addScriptDeclaration('
+				var modazModalStyle={"displayFormat":"' . $display_format . '"};
+			');
+		else :
+			// load standard jQuery
+			JHtml::_( 'jquery.framework' );
+		endif;
 		
-		// load Javascript after jQuery
-		JHtml::_( 'jquery.framework' );
+		// load standard assets
+		$doc->addStyleSheet( 'modules/mod_azdirectory/assets/modazdirectory.css' );
 		$doc->addScript( 'modules/mod_azdirectory/assets/modazdirectory.js' );
 		$doc->addScript( 'modules/mod_azdirectory/assets/svgxuse.min.js', 'text/javascript', true, false );
 
