@@ -29,7 +29,7 @@ $azdirectory = modAZDirectoryHelper::getAZDirectory($params);
 
 // handle lastletter parameter in the URL
 if( !is_null( $jinput->get('lastletter') ) ) :
-	$lastletter = $jinput->get('lastletter');
+	$lastletter = $jinput->get('lastletter', '', STRING);
 	$contacts =  modAZDirectoryHelper::getContactsNoAjax( $lastletter, $params );
 else :
 // handle configured last letter

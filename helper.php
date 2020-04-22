@@ -35,10 +35,13 @@ class modAZDirectoryHelper
 		// access database object
 		$db = JFactory::getDbo();
 		
+		// set collation
+		$collation = ( $params->get('swedish') == 1 ) ? self::_azGetCollation() : "";
+		
 		// get the first letter of the last name
 		$query = $db->getQuery(true);
 		$query
-			->select('DISTINCT(LEFT(SUBSTRING_INDEX(' . $db->quoteName('name') . ', \' \', -1), 1)) AS lastletter')
+			->select("DISTINCT(LEFT(SUBSTRING_INDEX(" . $db->quoteName('name') . ", ' ', -1), 1))" . $collation . " AS lastletter")
 			->from($db->quoteName('#__contact_details'))
 			->where($db->quoteName('catid') . ' = ' . $params->get('id'))
 			->where($db->quoteName('published') . ' = 1')
@@ -48,7 +51,16 @@ class modAZDirectoryHelper
 		$lastletters = array_keys($rows);
 		
 		// get the alphabet
-		$alphabet = range('A', 'Z');
+		$english = range('A', 'Z');
+		
+		if( $params->get('swedish') == 1 ) :
+			$swedish = array("&Aring;", "&Auml;", "&Ouml;");
+			array_walk($english, 'self::_azDecode');
+			array_walk($swedish, 'self::_azDecode');
+			$alphabet = array_merge($english, $swedish);
+		else :
+			$alphabet = $english;
+		endif;
 		
 		$tmpl = array();
 		$tmpl[0] = $alphabet;
@@ -71,31 +83,14 @@ class modAZDirectoryHelper
 		// get module parameters
 		$module = JModuleHelper::getModule('azdirectory');
 		$modparams = new JRegistry($module->params);
-
-		// create an instance
-		$return = new stdClass();
+		$catid = $modparams->get('id');
 		
-		// access database object
-		$db = JFactory::getDBO();
+		// set collation
+		$collation = ( $modparams->get('swedish') == 1 ) ? self::_azGetCollation() : "";
 
-		$query = $db->getQuery(true);
-		$query
-			->select(array('*'))
-			->from($db->quoteName('#__contact_details'));
-			
-		// if a specific letter is selected
-		if( $lastletter != 'All' ) :
-			$query->where("LEFT(SUBSTRING_INDEX(" . $db->quoteName('name') . ", ' ', -1), 1) = '" . $lastletter . "'");
-		endif;
-			
-		$query
-			->where($db->quoteName('catid') . ' = ' . $modparams->get('id'))
-			->where($db->quoteName('published') . ' = 1')
-			->order("SUBSTRING_INDEX(" . $db->quoteName('name') . ", ' ', -1)");
-	
-		$db->setQuery($query);
-		$contacts = $db->loadObjectList();
-		
+		// get the contacts
+		$contacts = self::_azGenerateQuery($collation, $lastletter, $catid);
+
 		// get parameters specific to the module configuration
 		foreach ($modparams as $key => $value) :
 			$$key = htmlspecialchars($value);
@@ -129,28 +124,16 @@ class modAZDirectoryHelper
 	 */
 	public static function getContactsNoAjax($lastletter, $params)
 	{
-		// access database object
-		$db = JFactory::getDBO();
+		// get category id
+		$catid = $params->get('id');
 
-		$query = $db->getQuery(true);
-		$query
-			->select(array('*'))
-			->from($db->quoteName('#__contact_details'));
-		
-		// if a specific letter is selected
-		if( $lastletter != 'All' ) :
-			$query->where("LEFT(SUBSTRING_INDEX(" . $db->quoteName('name') . ", ' ', -1), 1) = '" . $lastletter . "'");
-		endif;
-		
-		$query
-			->where($db->quoteName('catid') . ' = ' . $params->get('id'))
-			->where($db->quoteName('published') . " = 1")
-			->order("SUBSTRING_INDEX(" . $db->quoteName('name') . ", ' ', -1)");
-	
-		$db->setQuery($query);
-		$rows = $db->loadObjectList();
+		// set collation
+		$collation = ( $params->get('swedish') == 1 ) ? self::_azGetCollation() : "";
 
-		return $rows;
+		// get the contacts
+		$contacts = self::_azGenerateQuery($collation, $lastletter, $catid);
+
+		return $contacts;
 	}
 
 	/**
@@ -209,5 +192,76 @@ class modAZDirectoryHelper
 	public static function azSanitizeURL($url){
 		$filter = JFilterInput::getInstance();
 		return $filter->clean($url, "string");
+	}
+
+	/**
+	 * Method to generate SQL query
+	 *
+	 * @access    private
+	 */
+	private static function _azGenerateQuery($collation, $lastletter, $catid){
+		// access database object
+		$db = JFactory::getDBO();
+
+		$query = $db->getQuery(true);
+		$query
+			->select(array('*'))
+			->select("LEFT(SUBSTRING_INDEX(" . $db->quoteName('name') . ", ' ', -1), 1) AS lastletter")
+			->from($db->quoteName('#__contact_details'));
+			
+		// if a specific letter is selected
+		if( $lastletter != 'All' ) :
+			$query->where("LEFT(SUBSTRING_INDEX(" . $db->quoteName('name') . ", ' ', -1), 1)" . $collation . " = '" . $lastletter . "'");
+		endif;
+			
+		$query
+			->where($db->quoteName('catid') . ' = ' . $catid)
+			->where($db->quoteName('published') . ' = 1')
+			->order("SUBSTRING_INDEX(" . $db->quoteName('name') . ", ' ', -1)" . $collation);
+	
+		$db->setQuery($query);
+		
+		return $db->loadObjectList();
+	}
+
+	/**
+	 * Method to decode HTML entities
+	 *
+	 * @access    private
+	 */
+	 private static function _azDecode(&$item){
+		$item = html_entity_decode($item, ENT_NOQUOTES, 'UTF-8');
+		return $item;
+	}
+
+	/**
+	 * Method to set collation string
+	 *
+	 * @access    private
+	 */
+	private static function _azGetCollation(){
+		$config = JFactory::getConfig();
+		$schema = $config->get('db');
+		$dbprefix = $config->get('dbprefix');
+				
+		// access database object
+		$db = JFactory::getDBO();
+
+		$query = $db->getQuery(true);
+		
+		$query
+			->select($db->quoteName('character_set_name'))
+			->from('information_schema.' . $db->quoteName('COLUMNS'))
+			->where($db->quoteName('table_schema') . ' = ' . $db->quote($schema))
+			->where($db->quoteName('table_name') . ' = ' . $db->quote($dbprefix . 'contact_details'))
+			->where($db->quoteName('column_name') . ' = ' . $db->quote('name'));
+		
+		$db->setQuery($query);
+		$charSet = $db->loadResult(); // utf8mb4 or utf8
+
+		// set collation
+		$collationStr = " COLLATE " . $charSet . "_swedish_ci";
+
+		return $collationStr;
 	}
 }

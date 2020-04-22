@@ -6,7 +6,7 @@
 	<copyright>Copyright (C) 2016 Bmore Creative, Inc. All rights reserved.</copyright>
 	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
 	<authorUrl>bmorecreativeinc.com</authorUrl>
-    <version>2.0.0</version>
+    <version>2.1.0</version>
     <description>Arrange contacts in an A-Z, directory-style layout</description>
     <files>
         <filename module="mod_azdirectory">mod_azdirectory.php</filename>
@@ -354,6 +354,22 @@
 					default="1"
 					description="MOD_AZDIRECTORY_IMAGE_DESC"
 					label="MOD_AZDIRECTORY_IMAGE_LABEL">
+						<option value="1">JYES</option>
+						<option value="0">JNO</option>
+				</field>
+
+				<field
+					type="spacer"
+					name="spacer_swedish"
+					hr="true" />
+
+				<field
+					name="swedish"
+					type="radio"
+					class="btn-group"
+					default="0"
+					description="MOD_AZDIRECTORY_SWEDISH_DESC"
+					label="MOD_AZDIRECTORY_SWEDISH_LABEL">
 						<option value="1">JYES</option>
 						<option value="0">JNO</option>
 				</field>
