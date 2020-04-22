@@ -12,6 +12,7 @@
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
 require_once dirname(__FILE__) . '/helper.php';
+require_once dirname(__FILE__) . '/helpers/parser.php';
 $az = modAZDirectoryHelper::azInstance( $params, $module->id );
 
 $jinput = JFactory::getApplication()->input;

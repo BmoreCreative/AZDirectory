@@ -107,8 +107,9 @@ class modAZDirectoryHelper
 			if( $sortorder == 'fn' ) :
 				$letters[] = mb_substr( $name, 0, 1, "utf8" );
 			else: 
-				$words = explode( ' ', $name );
-				$letters[] = mb_substr( end( $words ), 0, 1, "utf8" );
+				$parser = new FullNameParser();
+				$words = $parser->parse_name( $name );
+				$letters[] = mb_substr( $words['lname'], 0, 1, "utf8" );
 			endif;
 		endforeach;
 		
@@ -275,9 +276,10 @@ class modAZDirectoryHelper
 	 */	
 	public static function azFormatName( $name, $lastnameFirst ){
 		if( $lastnameFirst == 1 ) :
-			$nameparts = explode( " ", $name );
-			$lastname = array_pop( $nameparts );
-			$firstname = implode( " ", $nameparts );
+			$parser = new FullNameParser();
+			$words = $parser->parse_name( $name );
+			$lastname = $words['lname'];
+			$firstname = $words['fname'];
 			$name = $lastname . ", " . $firstname;
 		endif;
 		return $name;
@@ -368,9 +370,9 @@ class modAZDirectoryHelper
 		$language->load( 'mod_azdirectory' );
 
 		if ( $sortorder == 'fn' ) :
-			$modazfirstoption = JText::_('MOD_AZDIRECTORY_SORTORDER_FN');
+			$modazfirstoption = JText::_( 'MOD_AZDIRECTORY_SORTORDER_FN' );
 		else :
-			$modazfirstoption = JText::_('MOD_AZDIRECTORY_SORTORDER_LN');
+			$modazfirstoption = JText::_( 'MOD_AZDIRECTORY_SORTORDER_LN' );
 		endif;
 
 		return $modazfirstoption;
@@ -382,7 +384,9 @@ class modAZDirectoryHelper
 	 * @access    public
 	 */
 	public static function azGenerateQuery( $letter, $start, $params )
-	{	
+	{
+		require_once dirname(__FILE__) . '/helpers/parser.php';
+
 		// get category id
 		$catid = $params->get( 'id' );
 		
@@ -430,14 +434,15 @@ class modAZDirectoryHelper
 			if( $sortorder == 'fn' ) :
 				$record->letter = mb_substr( $name, 0, 1, "utf8" );
 			else: 
-				$words = explode( ' ', $name );
-				$record->letter = mb_substr( end( $words ), 0, 1, "utf8" );
-				$record->ln = end( $words );
+				$parser = new FullNameParser();
+				$words = $parser->parse_name( $name );
+				$record->letter = mb_substr( $words['lname'], 0, 1, "utf8" );
+				$record->ln = $words['lname'];
 			endif;
 		endforeach;
 		
 		// remove objects where the selected letter is not the targeted letter
-		if( $letter != JText::_('JALL') ) :
+		if( $letter != JText::_( 'JALL' ) ) :
 			$result = array_filter( $result, function( $a ) use ( $letter ){
 				return $a->letter === $letter;
 			});
