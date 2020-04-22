@@ -65,17 +65,16 @@ defined('_JEXEC') or die('Restricted access');
               	<?php endif; ?>
 
                 <div class="modazdirectory__result">
-                    <?php if ( $show_image == 1 ) : 
-                    $contactImage =  JUri::base() . $contact->image;
-                    $image_attrs = getimagesize( $contactImage );
-                    if( empty( $image_attrs ) ) : ?>
+                    <?php if ( $show_image == 1 ) :
+					$contactImage =  JUri::base() . $contact->image;
+					if ( @exif_imagetype( $contactImage ) ) : ?>
+					<img src="<?php echo $contactImage; ?>" alt="<?php echo $contact->name; ?>" class="modazdirectory__image" />
+                    <?php else : ?>
 					<span class="modazdirectory__glyph-camera">
 						<svg class="modazdirectory__icon">
 							<use xlink:href="<?php echo JUri::base() . 'modules/' . $module->module; ?>/assets/symbol-defs.svg#icon-camera"></use>
 						</svg>
 					</span>
-                    <?php else : ?>
-                    <img src="<?php echo $contactImage; ?>" alt="<?php echo $contact->name; ?>" class="modazdirectory__image" />
                     <?php endif; endif; ?>
 
                     <div>
