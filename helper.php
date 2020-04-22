@@ -134,7 +134,7 @@ class modAZDirectoryHelper
 	{
 		// get the letter
 		$app = JFactory::getApplication();
-		$lastletter = $app->input->getString( 'data' );
+		$lastletter = $app->input->getWord( 'data' );
 		
 		// get module parameters
 		$module = JModuleHelper::getModule( 'azdirectory' );

@@ -6,7 +6,7 @@
 	<copyright>Copyright (C) 2016 Bmore Creative, Inc. All rights reserved.</copyright>
 	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
 	<authorUrl>bmorecreativeinc.com</authorUrl>
-    <version>5.3.4</version>
+    <version>5.3.5</version>
     <description>Arrange contacts in an A-Z, directory-style layout</description>
     <files>
         <filename module="mod_azdirectory">mod_azdirectory.php</filename>
@@ -21,8 +21,12 @@
 	<languages folder="language">
 		<language tag="en-GB">en-GB/en-GB.mod_azdirectory.ini</language>
 		<language tag="en-GB">en-GB/en-GB.mod_azdirectory.sys.ini</language>
+		<language tag="en-GB">es-ES/es-ES.mod_azdirectory.ini</language>
+		<language tag="en-GB">es-ES/es-ES.mod_azdirectory.sys.ini</language>		
 		<language tag="nl-NL">nl-NL/nl-NL.mod_azdirectory.ini</language>
 		<language tag="nl-NL">nl-NL/nl-NL.mod_azdirectory.sys.ini</language>
+		<language tag="fr-FR">fr-FR/fr-FR.mod_azdirectory.ini</language>
+		<language tag="fr-FR">fr-FR/fr-FR.mod_azdirectory.sys.ini</language>
 	</languages>
 	<updateservers>
 		<server type="extension" name="Bmore Creative, Inc. Update Server" priority="1">https://joomla.bmorecreativeinc.com/extensions/mod_azdirectory_update.xml</server>
