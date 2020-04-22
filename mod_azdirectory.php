@@ -15,8 +15,8 @@ require_once dirname(__FILE__) . '/helper.php';
 $jinput = JFactory::getApplication()->input;
 
 // process form submission
-if( $jinput->post->get('modazdirectory__submit', 'Submit', STRING) ) :
-	modAZDirectoryHelper::submit($jinput->post->get('modazdirectory__select', '', STRING));
+if( $jinput->get('modazdirectory__submit') ) :
+	modAZDirectoryHelper::submit($jinput->get('modazdirectory__select', '', STRING));
 endif;
 
 $moduleclass_sfx = htmlspecialchars($params->get('moduleclass_sfx'));
