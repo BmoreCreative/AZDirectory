@@ -6,7 +6,7 @@
 	<copyright>Copyright (C) 2016 Bmore Creative, Inc. All rights reserved.</copyright>
 	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
 	<authorUrl>bmorecreativeinc.com</authorUrl>
-    <version>1.0.5</version>
+    <version>2.0.0</version>
     <description>Arrange contacts in an A-Z, directory-style layout</description>
     <files>
         <filename module="mod_azdirectory">mod_azdirectory.php</filename>
@@ -86,18 +86,7 @@
 						<option value="1">JYES</option>
 						<option value="0">JNO</option>
 				</field>
-	
-				<field
-					name="show_email_to"
-					type="radio"
-					class="btn-group"
-					default="1"
-					description="MOD_AZDIRECTORY_CONTACT_E_MAIL_DESC"
-					label="JGLOBAL_EMAIL">
-						<option value="1">JYES</option>
-						<option value="0">JNO</option>
-				</field>
-	
+		
 				<field
 					name="show_address"
 					type="radio"
@@ -141,7 +130,12 @@
 						<option value="1">JYES</option>
 						<option value="0">JNO</option>
 				</field>
-	
+				
+				<field
+					type="spacer"
+					name="spacer_telephone"
+					hr="true" />
+				
 				<field
 					name="show_telephone"
 					type="radio"
@@ -152,6 +146,40 @@
 						<option value="1">JYES</option>
 						<option value="0">JNO</option>
 				</field>
+				
+				<field
+					name="show_telephone_icon"
+					type="radio"
+					class="btn-group"
+					default="0"
+					description="MOD_AZDIRECTORY_TELEPHONE_ICON_DESC"
+					label="MOD_AZDIRECTORY_TELEPHONE_ICON_LABEL">
+						<option value="1">JYES</option>
+						<option value="0">JNO</option>
+				</field>
+				
+				<field
+					name="telephone_label"
+					type="text"
+					default="t: "
+					description="MOD_AZDIRECTORY_TELEPHONE_LABEL_DESC"
+					label="MOD_AZDIRECTORY_TELEPHONE_LABEL_LABEL" />
+				
+				<field
+					name="telephone_hyperlink"
+					type="radio"
+					class="btn-group"
+					default="0"
+					description="MOD_AZDIRECTORY_TELEPHONE_HYPERLINK_DESC"
+					label="MOD_AZDIRECTORY_TELEPHONE_HYPERLINK_LABEL">
+						<option value="1">JYES</option>
+						<option value="0">JNO</option>
+				</field>
+				
+				<field
+					type="spacer"
+					name="spacer_mobile"
+					hr="true" />
 	
 				<field
 					name="show_mobile"
@@ -163,7 +191,41 @@
 						<option value="1">JYES</option>
 						<option value="0">JNO</option>
 				</field>
-	
+
+				<field
+					name="show_mobile_icon"
+					type="radio"
+					class="btn-group"
+					default="0"
+					description="MOD_AZDIRECTORY_MOBILE_ICON_DESC"
+					label="MOD_AZDIRECTORY_MOBILE_ICON_LABEL">
+						<option value="1">JYES</option>
+						<option value="0">JNO</option>
+				</field>
+				
+				<field
+					name="mobile_label"
+					type="text"
+					default="m: "
+					description="MOD_AZDIRECTORY_MOBILE_LABEL_DESC"
+					label="MOD_AZDIRECTORY_MOBILE_LABEL_LABEL" />
+
+				<field
+					name="mobile_hyperlink"
+					type="radio"
+					class="btn-group"
+					default="0"
+					description="MOD_AZDIRECTORY_MOBILE_HYPERLINK_DESC"
+					label="MOD_AZDIRECTORY_MOBILE_HYPERLINK_LABEL">
+						<option value="1">JYES</option>
+						<option value="0">JNO</option>
+				</field>
+
+				<field
+					type="spacer"
+					name="spacer_fax"
+					hr="true" />
+
 				<field
 					name="show_fax"
 					type="radio"
@@ -174,7 +236,79 @@
 						<option value="1">JYES</option>
 						<option value="0">JNO</option>
 				</field>
-	
+
+				<field
+					name="show_fax_icon"
+					type="radio"
+					class="btn-group"
+					default="0"
+					description="MOD_AZDIRECTORY_FAX_ICON_DESC"
+					label="MOD_AZDIRECTORY_FAX_ICON_LABEL">
+						<option value="1">JYES</option>
+						<option value="0">JNO</option>
+				</field>
+				
+				<field
+					name="fax_label"
+					type="text"
+					default="f: "
+					description="MOD_AZDIRECTORY_FAX_LABEL_DESC"
+					label="MOD_AZDIRECTORY_FAX_LABEL_LABEL" />
+
+				<field
+					name="fax_hyperlink"
+					type="radio"
+					class="btn-group"
+					default="0"
+					description="MOD_AZDIRECTORY_FAXHYPERLINK_DESC"
+					label="MOD_AZDIRECTORY_FAX_HYPERLINK_LABEL">
+						<option value="1">JYES</option>
+						<option value="0">JNO</option>
+				</field>
+
+				<field
+					type="spacer"
+					name="spacer_email_to"
+					hr="true" />
+
+				<field
+					name="show_email_to"
+					type="radio"
+					class="btn-group"
+					default="1"
+					description="MOD_AZDIRECTORY_CONTACT_E_MAIL_DESC"
+					label="JGLOBAL_EMAIL">
+						<option value="1">JYES</option>
+						<option value="0">JNO</option>
+				</field>
+
+				<field
+					name="show_email_to_icon"
+					type="radio"
+					class="btn-group"
+					default="0"
+					description="MOD_AZDIRECTORY_CONTACT_E_MAIL_ICON_DESC"
+					label="MOD_AZDIRECTORY_CONTACT_E_MAIL_ICON_LABEL">
+						<option value="1">JYES</option>
+						<option value="0">JNO</option>
+				</field>
+
+				<field
+					name="email_to_hyperlink"
+					type="radio"
+					class="btn-group"
+					default="0"
+					description="MOD_AZDIRECTORY_CONTACT_E_MAIL_HYPERLINK_DESC"
+					label="MOD_AZDIRECTORY_CONTACT_E_MAIL_HYPERLINK_LABEL">
+						<option value="1">JYES</option>
+						<option value="0">JNO</option>
+				</field>
+
+				<field
+					type="spacer"
+					name="spacer_webpage"
+					hr="true" />
+
 				<field
 					name="show_webpage"
 					type="radio"
@@ -185,6 +319,33 @@
 						<option value="1">JYES</option>
 						<option value="0">JNO</option>
 				</field>
+
+				<field
+					name="show_webpage_icon"
+					type="radio"
+					class="btn-group"
+					default="0"
+					description="MOD_AZDIRECTORY_WEBPAGE_ICON_DESC"
+					label="MOD_AZDIRECTORY_WEBPAGE_ICON_LABEL">
+						<option value="1">JYES</option>
+						<option value="0">JNO</option>
+				</field>
+
+				<field
+					name="webpage_hyperlink"
+					type="radio"
+					class="btn-group"
+					default="0"
+					description="MOD_AZDIRECTORY_WEBPAGE_HYPERLINK_DESC"
+					label="MOD_AZDIRECTORY_WEBPAGE_HYPERLINK_LABEL">
+						<option value="1">JYES</option>
+						<option value="0">JNO</option>
+				</field>
+
+				<field
+					type="spacer"
+					name="spacer_image"
+					hr="true" />
 	
 				<field
 					name="show_image"

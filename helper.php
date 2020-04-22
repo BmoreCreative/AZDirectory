@@ -71,7 +71,7 @@ class modAZDirectoryHelper
 		// get module parameters
 		$module = JModuleHelper::getModule('azdirectory');
 		$modparams = new JRegistry($module->params);
-		
+
 		// create an instance
 		$return = new stdClass();
 		
@@ -94,22 +94,32 @@ class modAZDirectoryHelper
 			->order("SUBSTRING_INDEX(" . $db->quoteName('name') . ", ' ', -1)");
 	
 		$db->setQuery($query);
-		$rows = $db->loadObjectList();
+		$contacts = $db->loadObjectList();
 		
-		$return->data = array();
-		$return->data['json_array'] = $rows;
-		$return->data['mod_params'] = json_decode( $modparams );
+		// get parameters specific to the module configuration
+		foreach ($modparams as $key => $value) :
+			$$key = htmlspecialchars($value);
+		endforeach;
 		
-		// get JUri::base for the full path to the contact image in Javascript
-		$return->data['juri_base'] = JUri::base();
+		$azdirectory = modAZDirectoryHelper::getAZDirectory($modparams);
 		
-		// get the last letter
-		$return->data['lastletter'] = $lastletter;
+		ob_clean();
+		ob_start();
 
-		echo json_encode($return);
-	
-		// close the $app
-		$app->close();	
+		$app= & JFactory::getApplication();
+		$template = $app->getTemplate();
+		$filename = JPATH_THEMES.'/'.$template.'/html/mod_azdirectory/default.php';
+		
+		if (file_exists($filename)) :
+			require_once $filename;
+		else :
+			require_once dirname(__FILE__) . '/tmpl/default.php';
+		endif;
+
+		ob_get_contents();
+
+		exit;
+		$app->close();
 	}
 
 	/**
@@ -180,5 +190,24 @@ class modAZDirectoryHelper
 			$name = $lastname . ", " . $firstname;
 		endif;
 		return $name;
+	}
+	
+	/**
+	 * Method to sanitize telephone numbers
+	 *
+	 * @access    public
+	 */
+	public static function azSanitizeTelephone($telephone){
+		return str_replace( array( "+", "-" ), "", filter_var( $telephone, FILTER_SANITIZE_NUMBER_INT ) );
+	}
+	
+	/**
+	 * Method to sanitize URLs
+	 *
+	 * @access    public
+	 */
+	public static function azSanitizeURL($url){
+		$filter = JFilterInput::getInstance();
+		return $filter->clean($url, "string");
 	}
 }

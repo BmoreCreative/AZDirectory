@@ -19,22 +19,22 @@ if( $jinput->get('modazdirectory__submit') ) :
 	modAZDirectoryHelper::submit($jinput->get('modazdirectory__select', '', STRING));
 endif;
 
-$moduleclass_sfx = htmlspecialchars($params->get('moduleclass_sfx'));
-$default_lastletter = $params->get('defaultletter');
+// get parameters specific to the module configuration
+// e.g. $show_image = $params->get('show_image');
+foreach ($params as $key => $value):
+	$$key = htmlspecialchars($value);
+endforeach;
+
 $azdirectory = modAZDirectoryHelper::getAZDirectory($params);
 
 // handle lastletter parameter in the URL
 if( !is_null( $jinput->get('lastletter') ) ) :
 	$lastletter = $jinput->get('lastletter');
-	$show_image = $params->get('show_image');
-	$lastname_first = $params->get('lastname_first');
 	$contacts =  modAZDirectoryHelper::getContactsNoAjax( $lastletter, $params );
 else :
 // handle configured last letter
-	if( $default_lastletter != '' ) :
-		$lastletter = $default_lastletter;
-		$show_image = $params->get('show_image');
-		$lastname_first = $params->get('lastname_first');
+	if( $defaultletter != '' ) :
+		$lastletter = $defaultletter;
 		$contacts =  modAZDirectoryHelper::getContactsNoAjax( $lastletter, $params );
 	endif;
 endif;

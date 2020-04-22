@@ -11,8 +11,9 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 ?>
-<a name="modazdirectory"></a>
-<div class="modazdirectory<?php echo $moduleclass_sfx; ?>">
+
+<div class="modazdirectory<?php echo $moduleclass_sfx; ?>" id="modazdirectory">
+	<a name="modazdirectory"></a>
 	<ul class="modazdirectory__list">
     	<li class="modazdirectory__listitem-all"><a class="modazdirectory__link" href="<?php echo JUri::current(); ?>?lastletter=All#modazdirectory" rel="All">All</a></li>
 		<?php
@@ -29,7 +30,7 @@ defined('_JEXEC') or die('Restricted access');
 	</ul>
 	<form name="modazdirectory__form" class="modazdirectory__form" method="post">
 		<select name="modazdirectory__select" id="modazdirectory__select">
-			<option value="" selected>Last Name</option>
+			<option value="">Last Name</option>
             <option value="<?php echo JUri::current(); ?>?lastletter=All#modazdirectory">All</option>
 			<?php foreach ( $azdirectory[1] as $letter ) : ?>
 			<option value="<?php echo JUri::current() . "?lastletter=" . $letter; ?>#modazdirectory"><?php echo $letter; ?></option>
@@ -41,15 +42,20 @@ defined('_JEXEC') or die('Restricted access');
 		<?php if ( $lastletter ) : ?>
         <h1><?php echo $lastletter; ?></h1>
         <?php endif; ?>
+		
+        <?php
+		$contactcount = count( $contacts );
+		$counter = 0;
+        ?>
+        
+    	<?php if ( !empty( $contacts ) ) : ?>
+        	<?php foreach ( $contacts as $key => &$contact ) : ?>
+            	<?php $rowcount = ( (int) $key % (int) 2 ) + 1; ?>
+                <?php if ( $rowcount == 1 ) : ?>
+                	<?php $row = $counter / 2; ?>
+            		<div class="modazdirectory__row">
+              	<?php endif; ?>
 
-    	<?php if ( is_array( $contacts ) ) : ?>
-			
-			<?php foreach ( array_chunk ( $contacts, 2 ) as $contactchunk ) : ?>
-            
-            <div class="modazdirectory__row">
-                
-                <?php foreach ( $contactchunk as $contact ) : ?>
-            	
                 <div class="modazdirectory__result">
                     <?php if ( $show_image == 1 ) : 
                     $contactImage =  JUri::base() . $contact->image;
@@ -92,33 +98,79 @@ defined('_JEXEC') or die('Restricted access');
                         </p>
                         
                         <?php if ( modAZDirectoryHelper::azVerify( 'telephone', $contact ) ): ?>
-                        <p>t: <?php echo $contact->telephone; ?></p>
+                        <p>
+							<?php if ( $show_telephone_icon ) : ?>
+                            <span class="modazdirectory__icon-phone"></span>
+                            <?php endif; ?>
+                            <span class="modazdirectory__label-phone"><?php echo $telephone_label; ?></span>
+							<?php if ( $telephone_hyperlink ) : ?>
+                            <a href="tel:+<?php echo modAZDirectoryHelper::azSanitizeTelephone( $contact->telephone ); ?>"><?php echo $contact->telephone; ?></a>
+                            <?php else: ?>
+							<?php echo $contact->telephone; ?>
+                            <?php endif; ?>
+                        </p>
                         <?php endif; ?>
                         
                         <?php if ( modAZDirectoryHelper::azVerify( 'mobile', $contact ) ) : ?>
-                        <p>m: <?php echo $contact->mobile; ?></p>
+                        <p>
+							<?php if ( $show_mobile_icon ) : ?>
+                            <span class="modazdirectory__icon-mobile"></span>
+                            <?php endif; ?>
+                            <span class="modazdirectory__label-mobile"><?php echo $mobile_label; ?></span>
+							<?php if ( $mobile_hyperlink ) : ?>
+							<a href="tel:+<?php echo modAZDirectoryHelper::azSanitizeTelephone( $contact->mobile ); ?>"><?php echo $contact->mobile; ?></a>
+							<?php else: ?>
+							<?php echo $contact->mobile; ?>
+							<?php endif; ?>
+                        </p>
                         <?php endif; ?>
                         
                         <?php if ( modAZDirectoryHelper::azVerify( 'fax', $contact ) ) : ?>
-                        <p>f: <?php echo $contact->fax; ?></p>
+                        <p>
+							<?php if ( $show_fax_icon ) : ?>
+                            <span class="modazdirectory__icon-fax"></span>
+                            <?php endif; ?>
+                            <span class="modazdirectory__label-fax"><?php echo $fax_label; ?></span>
+							<?php if ( $fax_hyperlink ) : ?>
+                            <a href="tel:+<?php echo modAZDirectoryHelper::azSanitizeTelephone( $contact->fax ); ?>"><?php echo $contact->fax; ?></a>
+							<?php else : ?>
+							<?php echo $contact->fax; ?>
+                            <?php endif; ?>
+                        </p>
                         <?php endif; ?>
 
                         <?php if ( modAZDirectoryHelper::azVerify( 'email_to', $contact ) ) : ?>
-                        <p><?php echo $contact->email_to; ?></p>
+                        <p>
+							<?php if ( $show_email_to_icon ) : ?>
+                            <span class="modazdirectory__icon-email_to"></span>
+                            <?php endif; ?>
+                            <?php if ( $email_to_hyperlink ) : ?>
+                            <?php echo JHtml::_('email.cloak', $contact->email_to, 1 ); ?>
+                            <?php else : ?>
+							<?php echo JHtml::_('email.cloak', $contact->email_to, 0 ); ?>
+                            <?php endif; ?>
+                        </p>
                         <?php endif; ?>
                         
                         <?php if ( modAZDirectoryHelper::azVerify( 'webpage', $contact ) ) : ?>
-                        <p><?php echo $contact->webpage; ?></p>
+                        <p>
+							<?php if ( $show_webpage_icon ) : ?>
+                            <span class="modazdirectory__icon-webpage"></span>
+                            <?php endif; ?>
+                            <?php if ( $webpage_hyperlink ) : ?>
+                            <a href="<?php echo modAZDirectoryHelper::azSanitizeURL( $contact->webpage ); ?>" target="_blank" rel="noopener"><?php echo $contact->webpage; ?></a> 
+                            <?php else : ?>
+							<?php echo $contact->webpage; ?>
+                            <?php endif; ?>
+                        </p>
                         <?php endif; ?>
                     </div>
                 </div> <!-- /modazdirectory__result -->
-            
-				<?php endforeach; ?>
-            
-            </div> <!-- /modazdirectory__row -->
-           
+
+                <?php if ( ( $rowcount == 2 ) or ( $counter == $contactcount ) ) : ?>
+            		</div> <!-- /modazdirectory__row -->
+                <?php endif; ?>
             <?php endforeach; ?>
-    
    		<?php endif; ?>
 
     </div> <!-- /modazdirectory__results -->
