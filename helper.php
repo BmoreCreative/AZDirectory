@@ -249,6 +249,28 @@ class modAZDirectoryHelper
 		$filter = JFilterInput::getInstance();
 		return $filter->clean( $url, "string" );
 	}
+
+	/**
+	 * Method to get category title from ID
+	 *
+	 * @access    public
+	 */
+	public static function azCategory( $catid ){
+		// access database object
+		$db = JFactory::getDBO();
+
+		// initialize query
+		$query = $db->getQuery( true );
+
+		$query
+			->select( $db->quoteName( 'title' ) )
+			->from( $db->quoteName( '#__categories' ) )
+			->where( $db->quoteName( 'id' ) . ' = ' . $catid );
+				
+		$db->setQuery( $query );
+		
+		return $db->loadResult();
+	}
 	
 	/**
 	 * Method to format addresses

@@ -104,6 +104,13 @@ defined('_JEXEC') or die('Restricted access');
                         <?php endif; ?>
 
                         <p><?php echo $az->azFormatAddress( $contact, $postcode_first ); ?></p>
+
+                        <?php if ( $show_category == 1 ): ?>
+                        <p>
+                            <span class="modazdirectory__label-category"><?php echo $category_label; ?></span>
+							<?php echo $az->azCategory( $contact->catid ); ?>
+                        </p>
+                        <?php endif; ?>
                         
                         <?php if ( $az->azVerify( 'telephone', $contact ) ): ?>
                         <p>

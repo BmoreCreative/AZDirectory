@@ -6,7 +6,7 @@
 	<copyright>Copyright (C) 2016 Bmore Creative, Inc. All rights reserved.</copyright>
 	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
 	<authorUrl>bmorecreativeinc.com</authorUrl>
-    <version>5.1.0</version>
+    <version>5.2.0</version>
     <description>Arrange contacts in an A-Z, directory-style layout</description>
     <files>
         <filename module="mod_azdirectory">mod_azdirectory.php</filename>
@@ -177,7 +177,7 @@
 						<option value="1">JYES</option>
 						<option value="0">JNO</option>
 				</field>
-
+									
 				<field
 					type="spacer"
 					name="spacer_alphabet"
@@ -193,6 +193,29 @@
 						<option value="1">JYES</option>
 						<option value="0">JNO</option>
 				</field>
+
+				<field
+					type="spacer"
+					name="spacer_category"
+					hr="true" />
+
+				<field
+					name="show_category"
+					type="radio"
+					class="btn-group btn-group-yesno"
+					default="0"
+					description="MOD_AZDIRECTORY_CATEGORY_DESC"
+					label="MOD_AZDIRECTORY_CATEGORY_LABEL">
+						<option value="1">JYES</option>
+						<option value="0">JNO</option>
+				</field>
+
+				<field
+					name="category_label"
+					type="text"
+					default="Category: "
+					description="MOD_AZDIRECTORY_CATEGORY_LABEL_DESC"
+					label="MOD_AZDIRECTORY_CATEGORY_LABEL_LABEL" />
 				
 				<field
 					type="spacer"
