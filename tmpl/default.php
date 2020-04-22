@@ -35,7 +35,7 @@ defined('_JEXEC') or die('Restricted access');
 		</ul>
 		<form name="modazdirectory__form" class="modazdirectory__form" method="post">
 			<select name="modazdirectory__select" id="modazdirectory__select">
-				<option value=""><?php echo modAZDirectoryHelper::azFirstOption( $sortorder ); ?></option>
+				<option value=""><?php echo $az->azFirstOption( $sortorder ); ?></option>
 				<option value="<?php echo JUri::current(); ?>?lastletter=<?php echo JText::_('JALL'); ?>#modazdirectory"><?php echo JText::_('JALL'); ?></option>
 				<?php foreach ( $azdirectory[1] as $letter ) : ?>
 				<option value="<?php echo JUri::current() . "?lastletter=" . $letter; ?>#modazdirectory"><?php echo $letter; ?></option>
@@ -75,82 +75,82 @@ defined('_JEXEC') or die('Restricted access');
                     <?php endif; endif; ?>
 
                     <div>
-                        <?php if ( modAZDirectoryHelper::azVerify( 'name', $contact ) ): ?>						
-                        <h3><?php echo modAZDirectoryHelper::azFormatName($contact->name, $lastname_first); ?></h3>
+                        <?php if ( $az->azVerify( 'name', $contact ) ): ?>						
+                        <h3><?php echo $az->azFormatName($contact->name, $lastname_first); ?></h3>
                         <?php endif; ?>
 
-                        <?php if ( modAZDirectoryHelper::azVerify( 'con_position', $contact ) ): ?>
+                        <?php if ( $az->azVerify( 'con_position', $contact ) ): ?>
                         <p><?php echo $contact->con_position; ?></p>
                         <?php endif; ?>
 
-                        <?php if ( modAZDirectoryHelper::azVerify( 'address', $contact ) ) : ?>
+                        <?php if ( $az->azVerify( 'address', $contact ) ) : ?>
                         <p><?php echo $contact->address; ?></p>
                         <?php endif; ?>
 
-                        <p><?php echo modAZDirectoryHelper::azFormatAddress( $contact, $postcode_first ); ?></p>
+                        <p><?php echo $az->azFormatAddress( $contact, $postcode_first ); ?></p>
                         
-                        <?php if ( modAZDirectoryHelper::azVerify( 'telephone', $contact ) ): ?>
+                        <?php if ( $az->azVerify( 'telephone', $contact ) ): ?>
                         <p>
 							<?php if ( $show_telephone_icon ) : ?>
                             <span class="modazdirectory__icon-phone"></span>
                             <?php endif; ?>
                             <span class="modazdirectory__label-phone"><?php echo $telephone_label; ?></span>
 							<?php if ( $telephone_hyperlink ) : ?>
-                            <a href="tel:+<?php echo modAZDirectoryHelper::azSanitizeTelephone( $contact->telephone ); ?>"><?php echo $contact->telephone; ?></a>
+                            <a href="tel:+<?php echo $az->azSanitizeTelephone( $contact->telephone ); ?>"><?php echo $contact->telephone; ?></a>
                             <?php else: ?>
 							<?php echo $contact->telephone; ?>
                             <?php endif; ?>
                         </p>
                         <?php endif; ?>
                         
-                        <?php if ( modAZDirectoryHelper::azVerify( 'mobile', $contact ) ) : ?>
+                        <?php if ( $az->azVerify( 'mobile', $contact ) ) : ?>
                         <p>
 							<?php if ( $show_mobile_icon ) : ?>
                             <span class="modazdirectory__icon-mobile"></span>
                             <?php endif; ?>
                             <span class="modazdirectory__label-mobile"><?php echo $mobile_label; ?></span>
 							<?php if ( $mobile_hyperlink ) : ?>
-							<a href="tel:+<?php echo modAZDirectoryHelper::azSanitizeTelephone( $contact->mobile ); ?>"><?php echo $contact->mobile; ?></a>
+							<a href="tel:+<?php echo $az->azSanitizeTelephone( $contact->mobile ); ?>"><?php echo $contact->mobile; ?></a>
 							<?php else: ?>
 							<?php echo $contact->mobile; ?>
 							<?php endif; ?>
                         </p>
                         <?php endif; ?>
                         
-                        <?php if ( modAZDirectoryHelper::azVerify( 'fax', $contact ) ) : ?>
+                        <?php if ( $az->azVerify( 'fax', $contact ) ) : ?>
                         <p>
 							<?php if ( $show_fax_icon ) : ?>
                             <span class="modazdirectory__icon-fax"></span>
                             <?php endif; ?>
                             <span class="modazdirectory__label-fax"><?php echo $fax_label; ?></span>
 							<?php if ( $fax_hyperlink ) : ?>
-                            <a href="tel:+<?php echo modAZDirectoryHelper::azSanitizeTelephone( $contact->fax ); ?>"><?php echo $contact->fax; ?></a>
+                            <a href="tel:+<?php echo $az->azSanitizeTelephone( $contact->fax ); ?>"><?php echo $contact->fax; ?></a>
 							<?php else : ?>
 							<?php echo $contact->fax; ?>
                             <?php endif; ?>
                         </p>
                         <?php endif; ?>
 
-                        <?php if ( modAZDirectoryHelper::azVerify( 'email_to', $contact ) ) : ?>
+                        <?php if ( $az->azVerify( 'email_to', $contact ) ) : ?>
                         <p>
 							<?php if ( $show_email_to_icon ) : ?>
                             <span class="modazdirectory__icon-email_to"></span>
                             <?php endif; ?>
                             <?php if ( $email_to_hyperlink ) : ?>
-                            <?php echo JHtml::_('email.cloak', $contact->email_to, 1 ); ?>
+                            <?php echo JHtml::_( 'email.cloak', $contact->email_to, 1 ); ?>
                             <?php else : ?>
-							<?php echo JHtml::_('email.cloak', $contact->email_to, 0 ); ?>
+							<?php echo JHtml::_( 'email.cloak', $contact->email_to, 0 ); ?>
                             <?php endif; ?>
                         </p>
                         <?php endif; ?>
                         
-                        <?php if ( modAZDirectoryHelper::azVerify( 'webpage', $contact ) ) : ?>
+                        <?php if ( $az->azVerify( 'webpage', $contact ) ) : ?>
                         <p>
 							<?php if ( $show_webpage_icon ) : ?>
                             <span class="modazdirectory__icon-webpage"></span>
                             <?php endif; ?>
                             <?php if ( $webpage_hyperlink ) : ?>
-                            <a href="<?php echo modAZDirectoryHelper::azSanitizeURL( $contact->webpage ); ?>" target="_blank" rel="noopener"><?php echo $contact->webpage; ?></a> 
+                            <a href="<?php echo $az->azSanitizeURL( $contact->webpage ); ?>" target="_blank" rel="noopener"><?php echo $contact->webpage; ?></a> 
                             <?php else : ?>
 							<?php echo $contact->webpage; ?>
                             <?php endif; ?>

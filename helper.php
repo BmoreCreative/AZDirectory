@@ -9,10 +9,26 @@
  */
 
 // no direct access
-defined('_JEXEC') or die('Restricted access');
+defined( '_JEXEC' ) or die( 'Restricted access' );
 
 class modAZDirectoryHelper
 {
+	private $params = null;
+	private static $_azInstance = null;
+	
+	public static function azInstance( &$params )
+	{
+		if ( null == self::$_azInstance ) :
+			self::$_azInstance = new self( $params );
+		endif;
+	
+		return self::$_azInstance;
+	}
+
+	public function __construct( &$params ) {
+        $this->params = $params;
+    }
+
     /**
      *
      * @param   array  $params An object containing the module parameters
@@ -21,58 +37,58 @@ class modAZDirectoryHelper
      */
 	 
 	// get module parameters
-    public static function getAZDirectory($params)
+    public function getAZDirectory()
     {
 		// load stylesheet
 		$doc = JFactory::getDocument();
-		$doc->addStyleSheet('modules/mod_azdirectory/assets/modazdirectory.css');
+		$doc->addStyleSheet( 'modules/mod_azdirectory/assets/modazdirectory.css' );
 		
 		// load Javascript after jQuery
-		JHtml::_('jquery.framework');
-		$doc->addScript('modules/mod_azdirectory/assets/modazdirectory.js');
+		JHtml::_( 'jquery.framework' );
+		$doc->addScript( 'modules/mod_azdirectory/assets/modazdirectory.js' );
 
 		// access database object
 		$db = JFactory::getDbo();
 		
 		// set collation
-		$collation = ( $params->get('swedish') == 1 ) ? self::_azGetCollation() : "";
+		$collation = ( $this->params->get( 'swedish' ) == 1 ) ? $this->_azGetCollation() : "";
 		
 		// get sort order
-		$sortorder = $params->get('sortorder');
+		$sortorder = $this->params->get( 'sortorder' );
 		
 		// initialize query
-		$query = $db->getQuery(true);
+		$query = $db->getQuery( true );
 		
 		if( $sortorder == 'fn' ) :
 			// get the first letter of the first name
-			$query->select("DISTINCT(LEFT(" . $db->quoteName('name') . ", 1))" . $collation . " AS letter");
+			$query->select( "DISTINCT(LEFT(" . $db->quoteName( 'name' ) . ", 1))" . $collation . " AS letter" );
 		else :
 			// get the first letter of the last name
-			$query->select("DISTINCT(LEFT(SUBSTRING_INDEX(" . $db->quoteName('name') . ", ' ', -1), 1))" . $collation . " AS letter");
+			$query->select( "DISTINCT(LEFT(SUBSTRING_INDEX(" . $db->quoteName( 'name' ) . ", ' ', -1), 1))" . $collation . " AS letter" );
 		endif;
 		
-		$query->from($db->quoteName('#__contact_details'));
+		$query->from( $db->quoteName( '#__contact_details' ) );
 		
-		if( $params->get('id') ) :
-			$query->where($db->quoteName('catid') . ' = ' . $params->get('id'));
+		if( $this->params->get( 'id' ) ) :
+			$query->where( $db->quoteName( 'catid' ) . ' = ' . $this->params->get( 'id' ) );
 		endif;
 		
 		$query
-			->where($db->quoteName('published') . ' = 1')
-			->order($db->quoteName('letter'));
+			->where( $db->quoteName( 'published' ) . ' = 1' )
+			->order( $db->quoteName( 'letter' ) );
 
-		$db->setQuery($query);
-		$rows = $db->loadAssocList('letter');
-		$letters = array_keys($rows);
+		$db->setQuery( $query );
+		$rows = $db->loadAssocList( 'letter' );
+		$letters = array_keys( $rows );
 		
 		// get the alphabet
-		$english = range('A', 'Z');
+		$english = range( 'A', 'Z' );
 		
-		if( $params->get('swedish') == 1 ) :
-			$swedish = array("&Aring;", "&Auml;", "&Ouml;");
-			array_walk($english, 'self::_azDecode');
-			array_walk($swedish, 'self::_azDecode');
-			$alphabet = array_merge($english, $swedish);
+		if( $this->params->get( 'swedish' ) == 1 ) :
+			$swedish = array( "&Aring;", "&Auml;", "&Ouml;" );
+			array_walk( $english, 'self::_azDecode' );
+			array_walk( $swedish, 'self::_azDecode' );
+			$alphabet = array_merge( $english, $swedish );
 		else :
 			$alphabet = $english;
 		endif;
@@ -89,39 +105,40 @@ class modAZDirectoryHelper
 	 *
 	 * @access    public
 	 */
-	public static function getContactsAjax()
+	public function getContactsAjax()
 	{
 		// get the letter
 		$app = JFactory::getApplication();
-		$lastletter = $app->input->getString('data');
+		$lastletter = $app->input->getString( 'data' );
 		
 		// get module parameters
-		$module = JModuleHelper::getModule('azdirectory');
-		$modparams = new JRegistry($module->params);
-		$catid = $modparams->get('id');
-		$sortorder = $modparams->get('sortorder');
+		$module = JModuleHelper::getModule( 'azdirectory' );
+		$params = new JRegistry( $module->params );
+		$catid = $params->get( 'id' );
+		$sortorder = $params->get( 'sortorder' );
+		
+		$az = self::azInstance( $params );
 		
 		// set collation
-		$collation = ( $modparams->get('swedish') == 1 ) ? self::_azGetCollation() : "";
+		$collation = ( $params->get( 'swedish' ) == 1 ) ? $az->_azGetCollation() : "";
 
 		// get the contacts
-		$contacts = self::_azGenerateQuery($collation, $lastletter, $catid, $sortorder);
+		$contacts = $az->_azGenerateQuery( $collation, $lastletter, $catid, $sortorder );
 
 		// get parameters specific to the module configuration
-		foreach ($modparams as $key => $value) :
-			$$key = htmlspecialchars($value);
+		foreach( $params as $key => $value ) :
+			$$key = htmlspecialchars( $value );
 		endforeach;
 		
-		$azdirectory = modAZDirectoryHelper::getAZDirectory($modparams);
+		$azdirectory = $az->getAZDirectory();
 		
 		ob_clean();
 		ob_start();
 
-		$app= & JFactory::getApplication();
 		$template = $app->getTemplate();
 		$filename = JPATH_THEMES.'/'.$template.'/html/mod_azdirectory/default.php';
 		
-		if (file_exists($filename)) :
+		if( file_exists( $filename ) ) :
 			require_once $filename;
 		else :
 			require_once dirname(__FILE__) . '/tmpl/default.php';
@@ -138,19 +155,19 @@ class modAZDirectoryHelper
 	 *
 	 * @access    public
 	 */
-	public static function getContactsNoAjax($lastletter, $params)
+	public function getContactsNoAjax( $lastletter )
 	{
 		// get category id
-		$catid = $params->get('id');
+		$catid = $this->params->get( 'id' );
 		
 		// get the sort order
-		$sortorder = $params->get('sortorder');
+		$sortorder = $this->params->get( 'sortorder' );
 
 		// set collation
-		$collation = ( $params->get('swedish') == 1 ) ? self::_azGetCollation() : "";
+		$collation = ( $this->params->get( 'swedish' ) == 1 ) ? $this->_azGetCollation() : "";
 
 		// get the contacts
-		$contacts = self::_azGenerateQuery($collation, $lastletter, $catid, $sortorder);
+		$contacts = $this->_azGenerateQuery( $collation, $lastletter, $catid, $sortorder );
 
 		return $contacts;
 	}
@@ -160,12 +177,8 @@ class modAZDirectoryHelper
 	 *
 	 * @access    public
 	 */
-	public static function azVerify($key, $values){
-		// get module parameters
-		$module = JModuleHelper::getModule('azdirectory');
-		$params = new JRegistry($module->params);
-	
-		$param = $params->get('show_' . $key);
+	public function azVerify( $key, $values ){
+		$param = $this->params->get( 'show_' . $key );
 		$value = $values->$key;
 		return ( ( $param == 1 ) && ( $value ) ) ? 1 : 0;
 	}
@@ -175,7 +188,7 @@ class modAZDirectoryHelper
 	 *
 	 * @access    public
 	 */	
-	 public static function submit($azoption){
+	 public static function submit( $azoption ){
 		header( 'Location: ' . $azoption );		 
 	 }
 
@@ -184,7 +197,7 @@ class modAZDirectoryHelper
 	 *
 	 * @access    public
 	 */	
-	public static function azFormatName($name, $lastnameFirst){
+	public static function azFormatName( $name, $lastnameFirst ){
 		if( $lastnameFirst == 1 ) :
 			$nameparts = explode( " ", $name );
 			$lastname = array_pop( $nameparts );
@@ -199,7 +212,7 @@ class modAZDirectoryHelper
 	 *
 	 * @access    public
 	 */
-	public static function azSanitizeTelephone($telephone){
+	public static function azSanitizeTelephone( $telephone ){
 		return str_replace( array( "+", "-" ), "", filter_var( $telephone, FILTER_SANITIZE_NUMBER_INT ) );
 	}
 	
@@ -208,9 +221,9 @@ class modAZDirectoryHelper
 	 *
 	 * @access    public
 	 */
-	public static function azSanitizeURL($url){
+	public static function azSanitizeURL( $url ){
 		$filter = JFilterInput::getInstance();
-		return $filter->clean($url, "string");
+		return $filter->clean( $url, "string" );
 	}
 	
 	/**
@@ -218,23 +231,23 @@ class modAZDirectoryHelper
 	 *
 	 * @access    public
 	 */	
-	public static function azFormatAddress($contact, $postcodeFirst){
+	public function azFormatAddress( $contact, $postcodeFirst ){
 		$lines = array();
-		if ( self::azVerify( 'suburb', $contact ) || self::azVerify( 'state', $contact ) || self::azVerify( 'postcode', $contact ) ) :
+		if ( $this->azVerify( 'suburb', $contact ) || $this->azVerify( 'state', $contact ) || $this->azVerify( 'postcode', $contact ) ) :
 			if ( $postcodeFirst == 1 ) :
 				// international address format
 				$line = array();
-				if ( self::azVerify( 'postcode', $contact ) ) $line[] = '<span>' . $contact->postcode . '</span>';
-				if ( self::azVerify( 'suburb', $contact ) ) $line[] = '<span>' . $contact->suburb . '</span>';
-				if ( self::azVerify( 'state', $contact ) ) $line[] = '<span>' . $contact->state . '</span>';
+				if ( $this->azVerify( 'postcode', $contact ) ) $line[] = '<span>' . $contact->postcode . '</span>';
+				if ( $this->azVerify( 'suburb', $contact ) ) $line[] = '<span>' . $contact->suburb . '</span>';
+				if ( $this->azVerify( 'state', $contact ) ) $line[] = '<span>' . $contact->state . '</span>';
 				$lines[] = implode( ' ', $line );
 			else :
 				// US address format
 				$line = array();
-				if ( self::azVerify( 'suburb', $contact ) ) $line[] = '<span>' . $contact->suburb . '</span>';
-				if ( self::azVerify( 'state', $contact ) ) $line[] = '<span>' . $contact->state . '</span>';
+				if ( $this->azVerify( 'suburb', $contact ) ) $line[] = '<span>' . $contact->suburb . '</span>';
+				if ( $this->azVerify( 'state', $contact ) ) $line[] = '<span>' . $contact->state . '</span>';
 				if ( count( $line ) ) $line = array( implode( ', ', $line ) );
-				if ( self::azVerify( 'postcode', $contact ) ) $line[] = '<span>' . $contact->postcode . '</span>';
+				if ( $this->azVerify( 'postcode', $contact ) ) $line[] = '<span>' . $contact->postcode . '</span>';
 				$lines[] = implode( ' ', $line );	
 			endif;
 		endif;
@@ -247,9 +260,9 @@ class modAZDirectoryHelper
 	 *
 	 * @access    public
 	 */	
-	public static function azFirstOption($sortorder){
+	public static function azFirstOption( $sortorder ){
 		$language = JFactory::getLanguage();
-		$language->load('mod_azdirectory');
+		$language->load( 'mod_azdirectory' );
 
 		if ( $sortorder == 'fn' ) :
 			$modazfirstoption = JText::_('MOD_AZDIRECTORY_SORTORDER_FN');
@@ -265,64 +278,64 @@ class modAZDirectoryHelper
 	 *
 	 * @access    private
 	 */
-	private static function _azGenerateQuery($collation, $letter, $catid, $sortorder){
+	private static function _azGenerateQuery( $collation, $letter, $catid, $sortorder ){
 		// access database object
 		$db = JFactory::getDBO();
 
 		// initialize query
-		$query = $db->getQuery(true);
+		$query = $db->getQuery( true );
 
-		$query->select(array('*'));
+		$query->select( array('*') );
 		
 		if( $sortorder == 'fn' ) :
 			// get the first letter of the first name
-			$query->select("LEFT(" . $db->quoteName('name') . ", 1) AS letter");
+			$query->select( "LEFT(" . $db->quoteName( 'name' ) . ", 1) AS letter" );
 		else :
 			// get the first letter of the last name
-			$query->select("LEFT(SUBSTRING_INDEX(" . $db->quoteName('name') . ", ' ', -1), 1) AS letter");
+			$query->select( "LEFT(SUBSTRING_INDEX(" . $db->quoteName( 'name' ) . ", ' ', -1), 1) AS letter" );
 		endif;
 		
-		$query->from($db->quoteName('#__contact_details'));
+		$query->from( $db->quoteName( '#__contact_details' ) );
 			
 		// if a specific letter is selected
 		if( $letter != JText::_('JALL') ) :
 			if( $sortorder == 'fn' ) :
 				// get the first letter of the first name
-				$query->where("LEFT(" . $db->quoteName('name') . ", 1)" . $collation . " = '" . $letter . "'");
+				$query->where( "LEFT(" . $db->quoteName( 'name' ) . ", 1)" . $collation . " = '" . $letter . "'" );
 			else :
 				// get the first letter of the last name
-				$query->where("LEFT(SUBSTRING_INDEX(" . $db->quoteName('name') . ", ' ', -1), 1)" . $collation . " = '" . $letter . "'");
+				$query->where( "LEFT(SUBSTRING_INDEX(" . $db->quoteName( 'name' ) . ", ' ', -1), 1)" . $collation . " = '" . $letter . "'" );
 			endif;
 		endif;
 		
 		if( $catid ) :
-			$query->where($db->quoteName('catid') . ' = ' . $catid);
+			$query->where( $db->quoteName( 'catid' ) . ' = ' . $catid );
 		endif;
 			
-		$query->where($db->quoteName('published') . ' = 1');
+		$query->where($db->quoteName( 'published' ) . ' = 1' );
 		
 		// set the sort order
 		switch( $sortorder ) :
 			case 'fn' :
-				$query->order($db->quoteName('name') . $collation);
+				$query->order( $db->quoteName( 'name' ) . $collation );
 				break;
 			case 'ln' :
-				$query->order("SUBSTRING_INDEX(" . $db->quoteName('name') . ", ' ', -1)" . $collation);
+				$query->order( "SUBSTRING_INDEX(" . $db->quoteName( 'name' ) . ", ' ', -1)" . $collation );
 				break;
 			case 'sortfield' :
 				$query
-					->order($db->escape('sortname1'))
-					->order($db->escape('sortname2'))
-					->order($db->escape('sortname3'));
+					->order( $db->escape( 'sortname1' ) )
+					->order( $db->escape( 'sortname2' ) )
+					->order( $db->escape( 'sortname3' ) );
 				break;
 			case 'component' :
-				$query->order($db->escape('ordering'));
+				$query->order( $db->escape( 'ordering' ) );
 				break;
 			default :
-				$query->order("SUBSTRING_INDEX(" . $db->quoteName('name') . ", ' ', -1)" . $collation);
+				$query->order( "SUBSTRING_INDEX(" . $db->quoteName( 'name' ) . ", ' ', -1)" . $collation );
 		endswitch;
 
-		$db->setQuery($query);
+		$db->setQuery( $query );
 		
 		return $db->loadObjectList();
 	}
@@ -332,8 +345,8 @@ class modAZDirectoryHelper
 	 *
 	 * @access    private
 	 */
-	 private static function _azDecode(&$item){
-		$item = html_entity_decode($item, ENT_NOQUOTES, 'UTF-8');
+	 private static function _azDecode( &$item ){
+		$item = html_entity_decode( $item, ENT_NOQUOTES, 'UTF-8' );
 		return $item;
 	}
 
@@ -344,22 +357,22 @@ class modAZDirectoryHelper
 	 */
 	private static function _azGetCollation(){
 		$config = JFactory::getConfig();
-		$schema = $config->get('db');
-		$dbprefix = $config->get('dbprefix');
+		$schema = $config->get( 'db' );
+		$dbprefix = $config->get( 'dbprefix' );
 				
 		// access database object
 		$db = JFactory::getDBO();
 
-		$query = $db->getQuery(true);
+		$query = $db->getQuery( true );
 		
 		$query
-			->select($db->quoteName('character_set_name'))
-			->from('information_schema.' . $db->quoteName('COLUMNS'))
-			->where($db->quoteName('table_schema') . ' = ' . $db->quote($schema))
-			->where($db->quoteName('table_name') . ' = ' . $db->quote($dbprefix . 'contact_details'))
-			->where($db->quoteName('column_name') . ' = ' . $db->quote('name'));
+			->select( $db->quoteName( 'character_set_name' ) )
+			->from( 'information_schema.' . $db->quoteName( 'COLUMNS' ) )
+			->where( $db->quoteName( 'table_schema' ) . ' = ' . $db->quote( $schema ) )
+			->where( $db->quoteName( 'table_name' ) . ' = ' . $db->quote( $dbprefix . 'contact_details' ) )
+			->where( $db->quoteName( 'column_name' ) . ' = ' . $db->quote( 'name' ) );
 		
-		$db->setQuery($query);
+		$db->setQuery( $query );
 		$charSet = $db->loadResult(); // utf8mb4 or utf8
 
 		// set collation
