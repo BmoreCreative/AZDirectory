@@ -20,10 +20,21 @@ if( $jinput->post->get('modazdirectory__submit', 'Submit', STRING) ) :
 endif;
 
 $moduleclass_sfx = htmlspecialchars($params->get('moduleclass_sfx'));
+$default_lastletter = $params->get('defaultletter');
 $azdirectory = modAZDirectoryHelper::getAZDirectory($params);
-if( !is_null( $jinput->get('lastletter') ) ) : 
+
+// handle lastletter parameter in the URL
+if( !is_null( $jinput->get('lastletter') ) ) :
 	$lastletter = $jinput->get('lastletter');
 	$show_image = $params->get('show_image');
 	$contacts =  modAZDirectoryHelper::getContactsNoAjax( $lastletter, $params );
+else :
+// handle configured last letter
+	if( $default_lastletter != '' ) :
+		$lastletter = $default_lastletter;
+		$show_image = $params->get('show_image');
+		$contacts =  modAZDirectoryHelper::getContactsNoAjax( $lastletter, $params );
+	endif;
 endif;
+
 require JModuleHelper::getLayoutPath('mod_azdirectory');

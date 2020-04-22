@@ -82,8 +82,14 @@ class modAZDirectoryHelper
 		$query = $db->getQuery(true);
 		$query
 			->select(array('*'))
-			->from($db->quoteName('#__contact_details'))
-			->where("LEFT(SUBSTRING_INDEX(" . $db->quoteName('name') . ", ' ', -1), 1) = '" . $lastletter . "'")
+			->from($db->quoteName('#__contact_details'));
+			
+		// if a specific letter is selected
+		if( $lastletter != 'All' ) :
+			$query->where("LEFT(SUBSTRING_INDEX(" . $db->quoteName('name') . ", ' ', -1), 1) = '" . $lastletter . "'");
+		endif;
+			
+		$query
 			->where($db->quoteName('catid') . ' = ' . $params->get('id'))
 			->where($db->quoteName('published') . ' = 1')
 			->order("SUBSTRING_INDEX(" . $db->quoteName('name') . ", ' ', -1)");
@@ -120,8 +126,14 @@ class modAZDirectoryHelper
 		$query = $db->getQuery(true);
 		$query
 			->select(array('*'))
-			->from($db->quoteName('#__contact_details'))
-			->where("LEFT(SUBSTRING_INDEX(" . $db->quoteName('name') . ", ' ', -1), 1) = '" . $lastletter . "'")
+			->from($db->quoteName('#__contact_details'));
+		
+		// if a specific letter is selected
+		if( $lastletter != 'All' ) :
+			$query->where("LEFT(SUBSTRING_INDEX(" . $db->quoteName('name') . ", ' ', -1), 1) = '" . $lastletter . "'");
+		endif;
+		
+		$query
 			->where($db->quoteName('catid') . ' = ' . $params->get('id'))
 			->where($db->quoteName('published') . " = 1")
 			->order("SUBSTRING_INDEX(" . $db->quoteName('name') . ", ' ', -1)");

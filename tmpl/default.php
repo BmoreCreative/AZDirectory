@@ -14,6 +14,7 @@ defined('_JEXEC') or die('Restricted access');
 <a name="modazdirectory"></a>
 <div class="modazdirectory<?php echo $moduleclass_sfx; ?>">
 	<ul class="modazdirectory__list">
+    	<li class="modazdirectory__listitem-all"><a class="modazdirectory__link" href="<?php echo JUri::current(); ?>?lastletter=All#modazdirectory" rel="All">All</a></li>
 		<?php
         foreach ( $azdirectory[0] as $letter ) : 
             if ( in_array( $letter, $azdirectory[1] ) ) : ?>
@@ -29,6 +30,7 @@ defined('_JEXEC') or die('Restricted access');
 	<form name="modazdirectory__form" class="modazdirectory__form" method="post">
 		<select name="modazdirectory__select" id="modazdirectory__select">
 			<option value="" selected>Last Name</option>
+            <option value="<?php echo JUri::current(); ?>?lastletter=All#modazdirectory">All</option>
 			<?php foreach ( $azdirectory[1] as $letter ) : ?>
 			<option value="<?php echo JUri::current() . "?lastletter=" . $letter; ?>#modazdirectory"><?php echo $letter; ?></option>
 			<?php endforeach; ?>

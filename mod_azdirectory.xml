@@ -6,7 +6,7 @@
 	<copyright>Copyright (C) 2016 Bmore Creative, Inc. All rights reserved.</copyright>
 	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
 	<authorUrl>bmorecreativeinc.com</authorUrl>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
     <description>Arrange contacts in an A-Z, directory-style layout</description>
     <files>
         <filename module="mod_azdirectory">mod_azdirectory.php</filename>
@@ -34,11 +34,25 @@
     <config>
 		<fields name="params">
 			<fieldset name="basic" addfieldpath="/administrator/components/com_contact/models/fields">
-				<field name="id" type="category"
+				<field name="id"
+					type="category"
 					description="MOD_AZDIRECTORY_CATEGORY_DESC"
 					extension="com_contact"
 					label="MOD_AZDIRECTORY_CATEGORY_LABEL"
 					required="true" />
+
+				<field
+					name="defaultletter"
+					type="sql"
+					default=""
+					description="MOD_AZDIRECTORY_DEFAULT_LETTER_DESC"
+					label="MOD_AZDIRECTORY_DEFAULT_LETTER_LABEL"
+					query="SELECT DISTINCT(LEFT(SUBSTRING_INDEX(name, ' ', -1), 1)) AS lastletter FROM #__contact_details WHERE published = 1 ORDER BY lastletter"
+					key_field="lastletter"
+					value_field="lastletter">
+						<option value="">None</option>
+						<option value="All">All</option>
+				</field>
 
 				<field
 					name="show_name"

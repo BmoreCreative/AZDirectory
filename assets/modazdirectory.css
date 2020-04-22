@@ -120,7 +120,7 @@ div[class^="modazdirectory"]{
 	}
 }
 
-@media screen and (min-width: 600px){
+@media screen and (min-width: 640px){
 	.modazdirectory__form{
 		display: none;
 	}
@@ -136,9 +136,15 @@ div[class^="modazdirectory"]{
 	
 		.modazdirectory__listitem{
 			display: table-cell;
-			width: 3.846153846153846%; /* 100 / 26 */
+			width: 3.636363636363636%; /* 100 / 27.5 (A-Z + 1.5 spaces for All) */
 			color: #ddd;
 		}
+		
+			.modazdirectory__listitem-all{
+				display: table-cell;
+				width: 5.454545454545454%;
+				border-right: solid 1px #ccc;
+			}
 }
 
 @media screen and (min-width: 800px){
