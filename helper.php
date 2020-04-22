@@ -41,19 +41,22 @@ class modAZDirectoryHelper
     {
 		$doc = JFactory::getDocument();
 
-		if( $this->params->get( 'name_hyperlink' ) == 1 ) :
+		$nameHyperlink = $this->params->get( 'name_hyperlink' );
+
+		if( $nameHyperlink == 1 ) :
 			// load standard Bootstrap and custom Bootstrap styles
 			JHtml::_( 'bootstrap.framework' );
 			$doc->addStyleSheet( 'modules/mod_azdirectory/assets/modazbootstrap.css' );
 			// get Display Format for Contacts
 			$display_format = JComponentHelper::getParams( 'com_contact' )->get( 'presentation_style' );
-			$doc->addScriptDeclaration('
-				var modazModalStyle={"displayFormat":"' . $display_format . '"};
-			');
+			$doc->addScriptDeclaration('var modazModalStyle={"displayFormat":"' . $display_format . '"};');
 		else :
 			// load standard jQuery
 			JHtml::_( 'jquery.framework' );
 		endif;
+		
+		// set a flag whether to load azModal JS
+		$doc->addScriptDeclaration('var modazNameHyperlink=' . $nameHyperlink . ';');
 		
 		// load standard assets
 		$doc->addStyleSheet( 'modules/mod_azdirectory/assets/modazdirectory.css' );
