@@ -449,6 +449,7 @@ class modAZDirectoryHelper
 		endif;
 		
 		$locale = 'en_US.UTF-8';
+		if( in_array( 1, $alphabet ) ) $locale = 'sv_SE.UTF-8';
 		if( in_array( 3, $alphabet ) ) $locale = 'cs_CZ.UTF-8';
 		setlocale( LC_ALL, $locale );
 		
