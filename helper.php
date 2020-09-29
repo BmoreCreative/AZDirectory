@@ -56,6 +56,9 @@ class modAZDirectoryHelper
 		
 		// set a flag whether to load azModal JS
 		$doc->addScriptDeclaration( 'var modazNameHyperlink=' . $nameHyperlink . ';' );
+				
+		// pass value for JALL language constant to Javascript
+		JText::script( 'JALL' );
 		
 		// load standard assets
 		$doc->addStyleSheet( MODAZPATH . 'modazdirectory.css' );
@@ -81,6 +84,7 @@ class modAZDirectoryHelper
 					->from( $db->quoteName( '#__contact_details', 'a' ) );
 		
 		$catid = $this->params->get( 'id' );
+		
 		if( !empty( $catid[0] ) ) :
 			$query->where( $db->quoteName( 'a.catid' ) . ' IN ( ' . implode( ',', $catid ) . ' )' );
 		endif;
@@ -213,11 +217,12 @@ class modAZDirectoryHelper
 		
 		// get the data
 		$azdata = $app->input->getString( 'data' );
-		$lastletter = $azdata[0];
-		$start = $azdata[1];
+		$lastletter = filter_var( $azdata[0], FILTER_SANITIZE_STRING );
+		$start = filter_var( $azdata[1], FILTER_SANITIZE_NUMBER_INT );
+		$title = filter_var( $azdata[2], FILTER_SANITIZE_STRING );
 		
 		// get module parameters
-		$module = JModuleHelper::getModule( 'azdirectory' );
+		$module = JModuleHelper::getModule( 'azdirectory', $title );
 		$params = new JRegistry( $module->params );
 		
 		$az = self::azInstance( $params, $module->id );
@@ -225,6 +230,8 @@ class modAZDirectoryHelper
 		
 		// get the contacts
 		list( $contacts, $total, $start ) = $az->azGenerateQuery( $lastletter, $start, $params );
+		
+		// die();
 		
 		// get parameters specific to the module configuration
 		// e.g. $show_image = $params->get('show_image');
@@ -401,7 +408,7 @@ class modAZDirectoryHelper
 		
 		// get the alphabet
 		$alphabet = $params->get( 'swedish' );
-				
+						
 		// access database object
 		$db = JFactory::getDBo();
 
@@ -440,7 +447,7 @@ class modAZDirectoryHelper
 				$record->ln = $words['lname'];
 			endif;
 		endforeach;
-		
+				
 		// remove objects where the selected letter is not the targeted letter
 		if( $letter != JText::_( 'JALL' ) ) :
 			$result = array_filter( $result, function( $a ) use ( $letter ){

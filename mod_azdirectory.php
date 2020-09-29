@@ -18,6 +18,10 @@ $az = modAZDirectoryHelper::azInstance( $params, $module->id );
 $jinput = JFactory::getApplication()->input;
 $modAZAssetsPath = JUri::base() . 'modules/' . $module->module . '/assets/';
 
+// set the module title to get a unique instance in the Ajax callback
+$doc = JFactory::getDocument();
+$doc->addScriptDeclaration( 'var modazModuleTitle="' . $module->title . '";' );
+
 // process form submission
 if( $jinput->get( 'modazdirectory__select' ) ) :
 	JSession::checkToken() or die( 'Invalid Token' );
@@ -42,7 +46,7 @@ else :
 	// handle configured last letter
 	$defaultletter = ( $sortorder == 'fn' ) ? $defaultletterfn : $defaultletter;
 	if( $defaultletter != '' ) :
-		// trap for "All" -- TO DO: figure out how to include language constant as value in XML
+		// trap for All
 		if( $defaultletter == 'All' ) :
 			$defaultletter = JText::_( 'JALL' );
 		endif;
