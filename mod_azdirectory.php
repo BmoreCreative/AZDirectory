@@ -51,4 +51,4 @@ else :
 endif;
 
 list( $contacts, $total, $start ) = $az->azGenerateQuery( $lastletter, 0, $params );
-require JModuleHelper::getLayoutPath( 'mod_azdirectory' );
+require JModuleHelper::getLayoutPath( 'mod_azdirectory', $params->get( 'layout', 'default' ) );

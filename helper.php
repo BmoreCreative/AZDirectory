@@ -241,7 +241,7 @@ class modAZDirectoryHelper
 		ob_start();
 		
 		// checks for layout override first, then checks for original
-		require_once JModuleHelper::getLayoutPath( 'mod_azdirectory' );
+		require_once JModuleHelper::getLayoutPath( 'mod_azdirectory', $params->get( 'layout', 'default' ) );
 
 		ob_get_contents();
 
