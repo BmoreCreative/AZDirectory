@@ -72,6 +72,7 @@ defined('_JEXEC') or die('Restricted access');
 
 		<div class="modazdirectory__results">
         	<?php foreach ( $contacts as $key => $contact ) : ?>
+			
 				<div class="modazdirectory__result modazdirectory__layout-misc_<?php echo ( ( $misc_layout == 1 ) ? 'on' : 'off' ); ?>">
                     <?php if ( $show_image == 1 ) : ?>
 						<?php if ( empty( $contact->image ) ) : ?>
@@ -111,6 +112,10 @@ defined('_JEXEC') or die('Restricted access');
                         <?php endif; ?>
 
                         <p><?php echo $az->azFormatAddress( $contact, $postcode_first ); ?></p>
+						
+						<?php if( $az->azVerify( 'country', $contact ) ) : ?>
+						<p><?php echo $contact->country; ?></p>
+						<?php endif; ?>
 
                         <?php if ( $show_category == 1 ): ?>
                         <p>
