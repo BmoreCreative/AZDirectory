@@ -50,6 +50,9 @@ var azTriggerClick = function() {
 
 var azTriggerSelect = function() {
 	var azSelect = document.getElementById( 'modazdirectory__select' );
+	
+	if( azSelect == null ) return;
+	
 	azSelect.addEventListener( 'change', function( e ){
 		var azLetter;
 		var azSelectedIndex = e.target.selectedIndex;
@@ -70,6 +73,9 @@ var azTriggerSelect = function() {
 
 var azSelectDefault = function( letter ) {
 	var azSelect = document.getElementById( 'modazdirectory__select' );
+	
+	if( azSelect == null ) return;
+	
 	for( var i = 0; i < azSelect.options.length; i++ ){
 		if( azSelect.options[i].text == letter ){
 			azSelect.options[i].selected = true;
