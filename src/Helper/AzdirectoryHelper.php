@@ -16,6 +16,7 @@ defined('_JEXEC') or die('Restricted access');
 use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Date\Date;
 use Joomla\CMS\Filter\InputFilter;
+use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\Helper\ModuleHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
@@ -406,32 +407,58 @@ class AzdirectoryHelper
      */
     public function azCustomFields($id)
     {
-        // get custom fields by contact ID
-        $azCustomFields = FieldsHelper::getFields('com_contact.contact', $id, true);
-        // get custom field names
-        $azCustomFieldNames = array_map(function ($o) {
-            return $o->title;
-        }, $azCustomFields);
-        // get custom field IDs
-        $azCustomFieldIDs = array_map(function ($o) {
-            return $o->id;
-        }, $azCustomFields);
         // load fields model
-        \JModelLegacy::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_fields/models', 'FieldsModel');
-        $azModel = \JModelLegacy::getInstance('Field', 'FieldsModel', ['ignore_request' => true]);
-        // fetch values for custom field IDs
-        $azCustomFieldValues = $azModel->getFieldValues($azCustomFieldIDs, $id);
-        // create an array of field IDs as keys and field values as values
-        $azMap = array_combine($azCustomFieldIDs, $azCustomFieldNames);
-        // eliminate array entries with empty values
-        $azIntersect = array_intersect_key($azMap, $azCustomFieldValues);
-        // create an array setting the value of azIntersect as the keys of azCustomFieldValues
-        $azCombine = [];
-        foreach ($azIntersect as $key => $column) :
-            $azCombine[$column] = $azCustomFieldValues[$key];
-        endforeach;
+        \JModelLegacy::addIncludePath( JPATH_ADMINISTRATOR . '/components/com_fields/models', 'FieldsModel' );
+        $azModel = \JModelLegacy::getInstance( 'Field', 'FieldsModel', ['ignore_request' => true] );
+        // get custom fields by contact ID
+        $azCustomFields = FieldsHelper::getFields( 'com_contact.contact', $id, true );
+		// convert stdClass object to array
+		$azCustomFieldsObj2Arr = json_decode( json_encode( $azCustomFields ), true );
+		// create new array with selected keys
+		$azCustomFields = array();
+		foreach( $azCustomFieldsObj2Arr as $key => $column ) {
+			$azCustomFields[$key] = array_intersect_key(
+				$column,
+				array_flip( ['id', 'fieldparams', 'title', 'type'] )
+			);
+		}
+				
+		foreach( $azCustomFields as $key => $column ) {
+			// add custom field value to array
+			$azCustomFieldValue = $azModel->getFieldValue( $column['id'], $id );
+			$azCustomFields[$key]['value'] = $azCustomFieldValue;
 
-        return $azCombine;
+			// mimic Joomla behavior for displaying URLs
+			if( $column['type'] == 'url' ){
+				$azUrlHyperlink = ( $column['fieldparams']['show_url'] == 0 ) ? Text::_( 'JVISIT_LINK' ) : htmlspecialchars( $azCustomFieldValue );
+				$azCustomFields[$key]['value'] = '<a href="' . $this->azSanitizeURL( $azCustomFieldValue ) . '" target="_blank" rel="noopener">' .  $azUrlHyperlink . '</a>';
+			}
+			
+			// store the option text as the value for checkboxes, list, and radio
+			if( array_key_exists( 'options', $column['fieldparams'] ) ){
+				$azOptionText = "";
+				// loop through all the options
+				foreach( $column['fieldparams']['options'] as $option ){
+					// https://github.com/mitydigital/joomla-item-helper/blob/main/ItemHelper.php
+					// check if the selected value(s) has the current option
+                    // if the value is an array, there are 2 or more options - look inside the value as an array
+                    // if the value is a string, there is only one option - compare it is as a string
+					if( ( is_array( $azCustomFieldValue ) && in_array( $option['value'], $azCustomFieldValue ) ) || $azCustomFieldValue == $option['value'] ){
+						$azOptionText .= $option['name'] . ", ";
+					}
+				}
+				$azCustomFields[$key]['value'] = rtrim( $azOptionText, ", " );
+			}
+			
+			// add title slug to array for class names
+			$azCustomFields[$key]['slug'] = OutputFilter::stringURLSafe( $column['title'] );
+			// eliminate array entries with empty values
+			if( empty( $azCustomFieldValue ) ){
+				unset( $azCustomFields[$key] );
+			}
+		}
+
+        return $azCustomFields;
     }
 
     /**

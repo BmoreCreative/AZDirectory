@@ -12,7 +12,6 @@
 defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Application\SiteApplication;
-use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Input\Input;
 use Joomla\CMS\Language\Text;
@@ -44,7 +43,7 @@ use Joomla\Registry\Registry;
 			<?php if( sizeof( $azdirectory[0] ) > 1 ) : ?>
 			<p class="modazdirectory__label">
                 <?= Text::_( 'MOD_AZDIRECTORY_TMPL_CONTACTS_WITH' ) ?>
-                <?= Text::_('MOD_AZDIRECTORY_' . strtoupper( $alphabet ) ) ?>
+                <?= Text::_( 'MOD_AZDIRECTORY_' . strtoupper( $alphabet ) ) ?>
                 <?= Text::_( 'MOD_AZDIRECTORY_TMPL_NAMES' ) ?>
 			</p>
 			<?php endif; ?>
@@ -229,17 +228,17 @@ use Joomla\Registry\Registry;
 							</span>
                             <?php endif; ?>
                             <?php if ( $params->get('webpage_hyperlink', 0) ) : ?>
-                            <a href="<?= $az->azSanitizeURL( $contact->webpage ) ?>" target="_blank" rel="noopener"><?= htmlspecialchars($contact->webpage) ?></a>
+                            <a href="<?= $az->azSanitizeURL( $contact->webpage ) ?>" target="_blank" rel="noopener"><?= ( $params->get( 'show_webpage_url', 0 ) ) ? htmlspecialchars( $contact->webpage ) : Text::_( 'JVISIT_LINK' ) ?></a>
                             <?php else : ?>
-                                <?= htmlspecialchars($contact->webpage) ?>
+                                <?= htmlspecialchars( $contact->webpage ) ?>
                             <?php endif; ?>
                         </p>
                         <?php endif; ?>
 
-						<?php if ( $params->get('show_customfields', 0) ) : ?>
-						<?php foreach ( $contact->customfields as $azCustomK => $azCustomV ) : ?>
-						<p class="modazdirectory__field-<?= OutputFilter::stringURLSafe( $azCustomK ) ?>"><?= $azCustomK . ': ' . $azCustomV ?></p>
-						<?php endforeach; ?>
+						<?php if ( $params->get( 'show_customfields', 0 ) ) : ?>
+							<?php foreach ( $contact->customfields as $azCustomFields ) : ?>
+								<p class="modazdirectory__field-<?= $azCustomFields['slug'] ?>"><?= $azCustomFields['title'] ?>: <?= $azCustomFields['value'] ?></p>
+							<?php endforeach; ?>
 						<?php endif; ?>
 
                         <?php if ( $az->azVerify( 'misc', $contact ) ): ?>
