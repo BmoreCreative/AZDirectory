@@ -108,12 +108,12 @@ class modAZDirectoryHelper
 		$letters = $alphabets = array();
 		
 		foreach( $names as $key => $name ):
-			if( $sortorder == 'fn' ) :
-				$letters[] = mb_substr( $name, 0, 1, "utf8" );
-			else: 
+			if( $sortorder == 'ln' ) :
 				$parser = new FullNameParser();
 				$words = $parser->parse_name( $name );
 				$letters[] = mb_substr( $words['lname'], 0, 1, "utf8" );
+			else: 
+				$letters[] = mb_substr( $name, 0, 1, "utf8" );
 			endif;
 		endforeach;
 		
@@ -376,10 +376,10 @@ class modAZDirectoryHelper
 		$language = JFactory::getLanguage();
 		$language->load( 'mod_azdirectory' );
 
-		if ( $sortorder == 'fn' ) :
-			$modazfirstoption = JText::_( 'MOD_AZDIRECTORY_SORTORDER_FN' );
-		else :
+		if ( $sortorder == 'ln' ) :
 			$modazfirstoption = JText::_( 'MOD_AZDIRECTORY_SORTORDER_LN' );
+		else :
+			$modazfirstoption = JText::_( 'MOD_AZDIRECTORY_SORTORDER_FN' );
 		endif;
 
 		return $modazfirstoption;
@@ -438,13 +438,13 @@ class modAZDirectoryHelper
 		foreach( $result as $record ):
 			$name = $record->name;
 			
-			if( $sortorder == 'fn' ) :
-				$record->letter = mb_substr( $name, 0, 1, "utf8" );
-			else: 
+			if( $sortorder == 'ln' ) :
 				$parser = new FullNameParser();
 				$words = $parser->parse_name( $name );
 				$record->letter = mb_substr( $words['lname'], 0, 1, "utf8" );
 				$record->ln = $words['lname'];
+			else: 
+				$record->letter = mb_substr( $name, 0, 1, "utf8" );
 			endif;
 		endforeach;
 				
@@ -488,6 +488,32 @@ class modAZDirectoryHelper
 		endif;
 		
 		return array( $result, $total_rows, $start );
+	}
+	
+	/**
+	 * Method to get custom fields
+	 *
+	 * @access    public
+	 */
+	public static function azCustomFields( $id ){
+		// get custom fields by contact ID
+		$azCustomFields = FieldsHelper::getFields( 'com_contact.contact', $id, true );
+		// get custom field names
+		$azCustomFieldNames = array_map( function( $o ){ return $o->title; }, $azCustomFields );
+		// get custom field IDs
+		$azCustomFieldIDs = array_map( function( $o ){ return $o->id; }, $azCustomFields );
+		// load fields model
+		$azModel = JModelLegacy::getInstance( 'Field', 'FieldsModel', array( 'ignore_request' => true ) );
+		// fetch values for custom field IDs
+		$azCustomFieldValues = $azModel->getFieldValues( $azCustomFieldIDs, $id );
+		// create an array of field IDs as keys and field values as values
+		$azMap = array_combine( $azCustomFieldIDs, $azCustomFieldNames );	
+		// eliminate array entries with empty values
+		$azIntersect = array_intersect_key( $azMap, $azCustomFieldValues );
+		// create an array setting the value of azIntersect as the keys of azCustomFieldValues
+		$azCombine = array_combine( $azIntersect, $azCustomFieldValues );
+		
+		return $azCombine;
 	}
 	
 	/**

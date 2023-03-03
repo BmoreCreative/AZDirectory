@@ -72,7 +72,7 @@ defined('_JEXEC') or die('Restricted access');
 
 		<div class="modazdirectory__results">
         	<?php foreach ( $contacts as $key => $contact ) : ?>
-			
+	
 				<div class="modazdirectory__result modazdirectory__layout-misc_<?php echo ( ( $misc_layout == 1 ) ? 'on' : 'off' ); ?>">
                     <?php if ( $show_image == 1 ) : ?>
 						<?php if ( empty( $contact->image ) ) : ?>
@@ -211,6 +211,13 @@ defined('_JEXEC') or die('Restricted access');
                             <?php endif; ?>
                         </p>
                         <?php endif; ?>
+
+						<?php if( $show_customfields == 1 ) : ?>
+						<?php $azCustomFields = $az->azCustomFields( $contact->id ); ?>
+						<?php foreach ( $azCustomFields as $azCustomK => $azCustomV ) : ?>
+						<p><?php echo $azCustomK . ': ' . $azCustomV; ?></p>
+						<?php endforeach; ?>
+						<?php endif; ?>
 						
                         <?php if ( $az->azVerify( 'misc', $contact ) ): ?>
 						<blockquote>

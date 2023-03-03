@@ -44,14 +44,12 @@ if( !is_null( $jinput->get( 'lastletter' ) ) ) :
 	$lastletter = $jinput->getString( 'lastletter' );
 else :
 	// handle configured last letter
-	$defaultletter = ( $sortorder == 'fn' ) ? $defaultletterfn : $defaultletter;
-	if( $defaultletter != '' ) :
-		// trap for All
-		if( $defaultletter == 'All' ) :
-			$defaultletter = JText::_( 'JALL' );
-		endif;
-		$lastletter = $defaultletter;
+	$defaultletter = ( in_array( $sortorder, array( 'fn', 'component', 'sortfield' ), true ) ) ? $defaultletterfn : $defaultletter;
+	// trap for All
+	if( $defaultletter == 'All' ) :
+		$defaultletter = JText::_( 'JALL' );
 	endif;
+	$lastletter = $defaultletter;
 endif;
 
 list( $contacts, $total, $start ) = $az->azGenerateQuery( $lastletter, 0, $params );
