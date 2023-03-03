@@ -536,7 +536,7 @@ class modAZDirectoryHelper
 					return strcmp( $a->sortname1, $b->sortname1 );
 					break;
 				case 'component' :
-					return strcmp( $a->ordering, $b->ordering );
+					return strnatcmp( $a->ordering, $b->ordering );
 					break;
 				default :
 					return strcoll( $a->ln, $b->ln );
