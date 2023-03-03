@@ -217,14 +217,14 @@ class modAZDirectoryHelper
 		
 		// get the data
 		$azdata = $app->input->getString( 'data' );
-		$lastletter = filter_var( $azdata[0], FILTER_SANITIZE_STRING );
-		$start = filter_var( $azdata[1], FILTER_SANITIZE_NUMBER_INT );
-		$title = filter_var( $azdata[2], FILTER_SANITIZE_STRING );
+		$lastletter = filter_var( $azdata['letter'], FILTER_SANITIZE_STRING );
+		$start = filter_var( $azdata['start'], FILTER_SANITIZE_NUMBER_INT );
+		$title = filter_var( $azdata['title'], FILTER_SANITIZE_STRING );
 		
 		// get module parameters
 		$module = JModuleHelper::getModule( 'azdirectory', $title );
 		$params = new JRegistry( $module->params );
-		
+	
 		$az = self::azInstance( $params, $module->id );
 		$modAZAssetsPath = JUri::base() . 'modules/' . $module->module . '/assets/';
 		
