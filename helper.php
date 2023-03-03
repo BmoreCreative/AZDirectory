@@ -71,6 +71,10 @@ class modAZDirectoryHelper
 		endif;
 
 		$doc->addScript( MODAZPATH . 'svgxuse.min.js', 'text/javascript', true, false );
+		
+		// access control
+		$user = JFactory::getUser();
+		$authorised = $user->getAuthorisedViewLevels();
 
 		// access database object
 		$db = JFactory::getDbo();
@@ -98,6 +102,7 @@ class modAZDirectoryHelper
 		endif;
 		
 		$query
+			->where( $db->quoteName( 'a.access' ) . ' IN (' . implode( ',', $authorised ) . ')' ) 
 			->where( $db->quoteName( 'a.published' ) . ' = 1' )
 			->order( $db->quoteName( 'a.name' ) );
 		
@@ -408,7 +413,11 @@ class modAZDirectoryHelper
 		
 		// get the alphabet
 		$alphabet = $params->get( 'swedish' );
-						
+
+		// access control
+		$user = JFactory::getUser();
+		$authorised = $user->getAuthorisedViewLevels();
+		
 		// access database object
 		$db = JFactory::getDBo();
 
@@ -428,7 +437,9 @@ class modAZDirectoryHelper
 				->where( $db->quoteName( 'b.tag_id' ) . ' IN ( ' . implode( ',', $tagid ) . ')' );
 		endif;
 
-		$query->where($db->quoteName( 'a.published' ) . ' = 1' );
+		$query
+			->where( $db->quoteName( 'a.access' ) . ' IN (' . implode( ',', $authorised ) . ')' )
+			->where($db->quoteName( 'a.published' ) . ' = 1' );
 		
 		$db->setQuery( $query );
 
