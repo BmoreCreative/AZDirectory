@@ -11,6 +11,7 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Pagination\Pagination;
@@ -108,28 +109,28 @@ use Joomla\CMS\Uri\Uri;
                         <?php endif; ?>
 
                         <?php if ( $az->azVerify( 'con_position', $contact ) ): ?>
-                        <p><?php echo $contact->con_position; ?></p>
+                        <p class="modazdirectory__field-position"><?php echo $contact->con_position; ?></p>
                         <?php endif; ?>
 
                         <?php if ( $az->azVerify( 'address', $contact ) ) : ?>
-                        <p><?php echo $contact->address; ?></p>
+                        <p class="modazdirectory__field-address"><?php echo $contact->address; ?></p>
                         <?php endif; ?>
 
-                        <p><?php echo $az->azFormatAddress( $contact, $postcode_first ); ?></p>
+                        <p class="modazdirectory__field-postcode"><?php echo $az->azFormatAddress( $contact, $postcode_first ); ?></p>
 
                         <?php if ( $az->azVerify( 'country', $contact ) ) : ?>
-                        <p><?php echo $contact->country; ?></p>
+                        <p class="modazdirectory__field-country"><?php echo $contact->country; ?></p>
                         <?php endif; ?>
 
                         <?php if ( $show_category == 1 ): ?>
-                        <p>
+                        <p class="modazdirectory__field-category">
                             <span class="modazdirectory__label-category"><?php echo $category_label; ?></span>
 							<?php echo $contact->catname; ?>
                         </p>
                         <?php endif; ?>
                         
                         <?php if ( $az->azVerify( 'telephone', $contact ) ): ?>
-                        <p>
+                        <p class="modazdirectory__field-phone">
 							<?php if ( $show_telephone_icon ) : ?>
 							<span class="modazdirectory__glyph">
 								<svg class="modazdirectory__icon">
@@ -147,7 +148,7 @@ use Joomla\CMS\Uri\Uri;
                         <?php endif; ?>
                         
                         <?php if ( $az->azVerify( 'mobile', $contact ) ) : ?>
-                        <p>
+                        <p class="modazdirectory__field-mobile">
 							<?php if ( $show_mobile_icon ) : ?>
 							<span class="modazdirectory__glyph">
 								<svg class="modazdirectory__icon">
@@ -165,7 +166,7 @@ use Joomla\CMS\Uri\Uri;
                         <?php endif; ?>
                         
                         <?php if ( $az->azVerify( 'fax', $contact ) ) : ?>
-                        <p>
+                        <p class="modazdirectory__field-fax">
 							<?php if ( $show_fax_icon ) : ?>
 							<span class="modazdirectory__glyph">
 								<svg class="modazdirectory__icon">
@@ -183,7 +184,7 @@ use Joomla\CMS\Uri\Uri;
                         <?php endif; ?>
 
                         <?php if ( $az->azVerify( 'email_to', $contact ) ) : ?>
-                        <p class="modazdirectory__nowrap">
+                        <p class="modazdirectory__nowrap modazdirectory__field-email">
 							<?php if ( $show_email_to_icon ) : ?>
 							<span class="modazdirectory__glyph">
 								<svg class="modazdirectory__icon">
@@ -200,7 +201,7 @@ use Joomla\CMS\Uri\Uri;
                         <?php endif; ?>
                         
                         <?php if ( $az->azVerify( 'webpage', $contact ) ) : ?>
-                        <p class="modazdirectory__nowrap">
+                        <p class="modazdirectory__nowrap modazdirectory__field-webpage">
 							<?php if ( $show_webpage_icon ) : ?>
 							<span class="modazdirectory__glyph">
 								<svg class="modazdirectory__icon">
@@ -218,7 +219,7 @@ use Joomla\CMS\Uri\Uri;
 
 						<?php if ( $show_customfields ) : ?>
 						<?php foreach ( $contact->customfields as $azCustomK => $azCustomV ) : ?>
-						<p><?php echo $azCustomK . ': ' . $azCustomV; ?></p>
+						<p class="modazdirectory__field-<?php echo OutputFilter::stringURLSafe( $azCustomK ); ?>"><?php echo $azCustomK . ': ' . $azCustomV; ?></p>
 						<?php endforeach; ?>
 						<?php endif; ?>
 
