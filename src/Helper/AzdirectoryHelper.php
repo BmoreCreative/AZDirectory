@@ -214,7 +214,7 @@ class AzdirectoryHelper
         $layoutData['start']           = $start;
         $layoutData['az']              = $this;
         $layoutData['azdirectory']     = $this->getAZDirectory();
-        $layoutData['modAZAssetsPath'] = Uri::base() . 'modules/' . $this->module->module . '/assets/';
+        $layoutData['modAZAssetsPath'] = Uri::base() . 'media/' . $this->module->module . '/images/';
 
         return $layoutData;
     }
