@@ -12,6 +12,16 @@
 defined( '_JEXEC' ) or die( 'Restricted access' );
 define( 'MODAZPATH', 'modules/mod_azdirectory/assets/' );
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\Filter\InputFilter;
+use Joomla\CMS\Helper\ModuleHelper;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\User\User;
+use Joomla\Registry\Registry;
+
 class modAZDirectoryHelper
 {
 	private $params = null;
@@ -41,25 +51,22 @@ class modAZDirectoryHelper
 	// get module parameters
     public function getAZDirectory()
     {
-		$doc = JFactory::getDocument();
+		$doc = Factory::getDocument();
 		
 		$nameHyperlink = $this->params->get( 'name_hyperlink' );
 
 		if( $nameHyperlink == 1 ) :
 			// load standard Bootstrap and custom Bootstrap styles
-			JHtml::_( 'bootstrap.framework' );
+			HTMLHelper::_( 'bootstrap.framework' );
 			$doc->addStyleSheet( MODAZPATH . 'modazbootstrap.css' );
-			// get Display Format for Contacts
-			$display_format = JComponentHelper::getParams( 'com_contact' )->get( 'presentation_style' );
-			$doc->addScriptDeclaration( 'var modazModalStyle={"displayFormat":"' . $display_format . '"};' );
 		endif;
 		
 		// set a flag whether to load azModal JS
 		$doc->addScriptDeclaration( 'var modazNameHyperlink=' . $nameHyperlink . ';' );
-				
-		// pass value for JALL language constant to Javascript
-		JText::script( 'JALL' );
 		
+		// pass value for JALL language constant to Javascript
+		Text::script( 'JALL' );
+
 		// load standard assets
 		$doc->addStyleSheet( MODAZPATH . 'modazdirectory.css' );
 
@@ -70,53 +77,62 @@ class modAZDirectoryHelper
 			$doc->addScript( MODAZPATH . 'modazformsubmit.js' );
 		endif;
 
-		$doc->addScript( MODAZPATH . 'svgxuse.min.js', 'text/javascript', true, false );
-		
-		// access control
-		$user = JFactory::getUser();
-		$authorised = $user->getAuthorisedViewLevels();
-
-		// access database object
-		$db = JFactory::getDbo();
-		
 		// get sort order
 		$sortorder = $this->params->get( 'sortorder' );
 		
+		// published for bind statement
+		$published = 1;
+
+		// access control
+		$user = Factory::getUser();
+		$authorised = $user->getAuthorisedViewLevels();
+
+		// access database object
+		$db = Factory::getDbo();
+
+		// // Define null and now dates
+		$nullDate = $db->quote( $db->getNullDate() );
+		$nowDate = $db->quote( Factory::getDate()->toSql() );
+
 		// initialize query
+		// whereIn will automatically use the values and add prepared statements
 		$query = $db->getQuery( true )
 					->select( $db->quoteName( 'name' ) . " AS name" )
 					->from( $db->quoteName( '#__contact_details', 'a' ) );
 		
 		$catid = $this->params->get( 'id' );
-		
 		if( !empty( $catid[0] ) ) :
-			$query->where( $db->quoteName( 'a.catid' ) . ' IN ( ' . implode( ',', $catid ) . ' )' );
+			$query->whereIn( $db->quoteName( 'a.catid' ), $catid );
 		endif;
 	
-		$tagid = $this->params->get( 'tags' );
+		$tagid = (array)$this->params->get( 'tags' );
 		if( !empty( $tagid[0] ) ) :
 			$query
 				->join( 'LEFT', $db->quoteName( '#__contentitem_tag_map', 'b' ) . ' ON (' . $db->quoteName( 'a.id' ) . ' = ' . $db->quoteName( 'b.content_item_id' ) . ')' )
 				->where( $db->quoteName( 'b.type_alias' ) . ' = ' . $db->quote( 'com_contact.contact' ) )
-				->where( $db->quoteName( 'b.tag_id' ) . ' IN ( ' . implode( ',', $tagid ) . ')' );
+				->whereIn( $db->quoteName( 'b.tag_id' ), $tagid );
 		endif;
 		
 		$query
-			->where( $db->quoteName( 'a.access' ) . ' IN (' . implode( ',', $authorised ) . ')' ) 
-			->where(
+			->whereIn( $db->quoteName( 'a.access' ), $authorised )
+			->where( $db->quoteName( 'a.published' ) . ' = :published' )
+			->andWhere(
 				[
-					$db->quoteName( 'a.published' ) . ' = 1',
-					$db->quoteName( 'a.publish_up' ) . ' <= CURRENT_TIMESTAMP',
+					$db->quoteName( 'a.publish_up' ) . ' = ' . $nullDate,
+					$db->quoteName( 'a.publish_up' ) . ' IS NULL',
+					$db->quoteName( 'a.publish_up' ) . ' <= ' . $nowDate
 				]
 			)
 			->andWhere(
 				[
-					$db->quoteName( 'a.publish_down' ) . ' = ' . $db->quote( '0000-00-00 00:00:00' ),
-					$db->quoteName( 'a.publish_down' ) . ' > CURRENT_TIMESTAMP'
+					$db->quoteName( 'a.publish_down' ) . ' = ' . $nullDate,
+					$db->quoteName( 'a.publish_down' ) . ' IS NULL',
+					$db->quoteName( 'a.publish_down' ) . ' >= ' . $nowDate
 				]
 			)
-			->order( $db->quoteName( 'a.name' ) );
-		
+			->order( $db->quoteName( 'a.name' ) )
+			->bind( ':published', $published );
+				
 		$db->setQuery( $query );
 		$rows = $db->loadAssocList( 'name' );
 		$names = array_keys( $rows );
@@ -149,14 +165,10 @@ class modAZDirectoryHelper
 			foreach( $letters as $letter ){
 				
 				// get the unicode values
-				if( version_compare( phpversion(), '7.2', 'ge' ) ){
-					$unicode = dechex( mb_ord( $letter ) );
-				} else {
-					$unicode = dechex( modAZDirectoryHelper::_azMBOrd( $letter ) );
-				}
+				$unicode = dechex( mb_ord( $letter ) );
 				
 				// ensure the unicode values are 4 digits by prepending zeroes
-				$unicode = modAZDirectoryHelper::_azStrPadUnicode( $unicode, 4, '0', STR_PAD_LEFT );
+				$unicode = AZDirectoryHelper::_azStrPadUnicode( $unicode, 4, '0', STR_PAD_LEFT );
 				
 				// add them into Latin or Cyrillic arrays
 				if( ( $unicode >= '0041' ) && ( $unicode <= '024f' ) )
@@ -229,7 +241,7 @@ class modAZDirectoryHelper
 	 */
 	public static function getContactsAjax()
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		
 		// get the data
 		$azdata = $app->input->getString( 'data' );
@@ -238,16 +250,14 @@ class modAZDirectoryHelper
 		$title = filter_var( $azdata['title'], FILTER_SANITIZE_STRING );
 		
 		// get module parameters
-		$module = JModuleHelper::getModule( 'azdirectory', $title );
-		$params = new JRegistry( $module->params );
-	
+		$module = ModuleHelper::getModule( 'azdirectory', $title );
+		$params = new Registry( $module->params );
+		
 		$az = self::azInstance( $params, $module->id );
-		$modAZAssetsPath = JUri::base() . 'modules/' . $module->module . '/assets/';
+		$modAZAssetsPath = Uri::base() . 'modules/' . $module->module . '/assets/';
 		
 		// get the contacts
 		list( $contacts, $total, $start ) = $az->azGenerateQuery( $lastletter, $start, $params );
-		
-		// die();
 		
 		// get parameters specific to the module configuration
 		// e.g. $show_image = $params->get('show_image');
@@ -264,7 +274,7 @@ class modAZDirectoryHelper
 		ob_start();
 		
 		// checks for layout override first, then checks for original
-		require_once JModuleHelper::getLayoutPath( 'mod_azdirectory', $params->get( 'layout', 'default' ) );
+		require_once ModuleHelper::getLayoutPath( 'mod_azdirectory', $params->get( 'layout', 'default' ) );
 
 		ob_get_contents();
 
@@ -323,7 +333,7 @@ class modAZDirectoryHelper
 	 * @access    public
 	 */
 	public static function azSanitizeURL( $url ){
-		$filter = JFilterInput::getInstance();
+		$filter = InputFilter::getInstance();
 		return $filter->clean( $url, "string" );
 	}
 
@@ -334,13 +344,14 @@ class modAZDirectoryHelper
 	 */
 	public static function azCategory( $catid ){
 		// access database object
-		$db = JFactory::getDBo();
+		$db = Factory::getDBo();
 
 		// initialize query
 		$query = $db->getQuery( true )
 					->select( $db->quoteName( 'title' ) )
 					->from( $db->quoteName( '#__categories' ) )
-					->where( $db->quoteName( 'id' ) . ' = ' . $catid );
+					->where( $db->quoteName( 'id' ) . ' = :catid' )
+					->bind( ':catid', $catid );
 				
 		$db->setQuery( $query );
 		
@@ -389,13 +400,13 @@ class modAZDirectoryHelper
 	 */	
 	public static function azFirstOption( $sortorder )
 	{
-		$language = JFactory::getLanguage();
+		$language = Factory::getLanguage();
 		$language->load( 'mod_azdirectory' );
 
 		if ( $sortorder == 'ln' ) :
-			$modazfirstoption = JText::_( 'MOD_AZDIRECTORY_SORTORDER_LN' );
+			$modazfirstoption = Text::_( 'MOD_AZDIRECTORY_SORTORDER_LN' );
 		else :
-			$modazfirstoption = JText::_( 'MOD_AZDIRECTORY_SORTORDER_FN' );
+			$modazfirstoption = Text::_( 'MOD_AZDIRECTORY_SORTORDER_FN' );
 		endif;
 
 		return $modazfirstoption;
@@ -425,50 +436,63 @@ class modAZDirectoryHelper
 		// get the alphabet
 		$alphabet = $params->get( 'swedish' );
 
-		// access control
-		$user = JFactory::getUser();
-		$authorised = $user->getAuthorisedViewLevels();
+		// published for bind statement
+		$published = 1;
 		
+		// access control
+		$user = Factory::getUser();
+		$authorised = $user->getAuthorisedViewLevels();
+
 		// access database object
-		$db = JFactory::getDBo();
+		$db = Factory::getDBo();
+		
+		// // Define null and now dates
+		$nullDate = $db->quote( $db->getNullDate() );
+		$nowDate = $db->quote( Factory::getDate()->toSql() );
 
 		// initialize query
+		// whereIn will automatically use the values and add prepared statements
 		$query = $db->getQuery( true )
 					->select( array('*') )
 					->from( $db->quoteName( '#__contact_details', 'a' ) );
 		
 		if( !empty( $catid[0] ) ) :
-			$query->where( $db->quoteName( 'a.catid' ) . ' IN ( ' . implode( ',', $catid ) . ' )' );
+			$query->whereIn( $db->quoteName( 'a.catid' ), $catid );
 		endif;
 		
 		if( !empty( $tagid[0] ) ) :
 			$query
 				->join( 'LEFT', $db->quoteName( '#__contentitem_tag_map', 'b' ) . ' ON (' . $db->quoteName( 'a.id' ) . ' = ' . $db->quoteName( 'b.content_item_id' ) . ')' )
 				->where( $db->quoteName( 'b.type_alias' ) . ' = ' . $db->quote( 'com_contact.contact' ) )
-				->where( $db->quoteName( 'b.tag_id' ) . ' IN ( ' . implode( ',', $tagid ) . ')' );
+				->whereIn( $db->quoteName( 'b.tag_id' ), $tagid );
 		endif;
 
 		$query
-			->where( $db->quoteName( 'a.access' ) . ' IN (' . implode( ',', $authorised ) . ')' )
-			->where(
+			->whereIn( $db->quoteName( 'a.access' ), $authorised )
+			->where( $db->quoteName( 'a.published' ) . ' = :published' )
+			->andWhere(
 				[
-					$db->quoteName( 'a.published' ) . ' = 1',
-					$db->quoteName( 'a.publish_up' ) . ' <= CURRENT_TIMESTAMP',
+					$db->quoteName( 'a.publish_up' ) . ' = ' . $nullDate,
+					$db->quoteName( 'a.publish_up' ) . ' IS NULL',
+					$db->quoteName( 'a.publish_up' ) . ' <= ' . $nowDate
 				]
 			)
 			->andWhere(
 				[
-					$db->quoteName( 'a.publish_down' ) . ' = ' . $db->quote( '0000-00-00 00:00:00' ),
-					$db->quoteName( 'a.publish_down' ) . ' > CURRENT_TIMESTAMP'
+					$db->quoteName( 'a.publish_down' ) . ' = ' . $nullDate,
+					$db->quoteName( 'a.publish_down' ) . ' IS NULL',
+					$db->quoteName( 'a.publish_down' ) . ' >= ' . $nowDate
 				]
-			);
-		
+			)
+			->bind( ':published', $published );
+				
 		$db->setQuery( $query );
 
 		$result = $db->loadObjectList();
 
-		// add the targeted letter to each object
 		foreach( $result as $record ):
+			
+			// add the targeted letter to each object
 			$name = $record->name;
 			
 			if( $sortorder == 'ln' ) :
@@ -479,10 +503,17 @@ class modAZDirectoryHelper
 			else: 
 				$record->letter = mb_substr( $name, 0, 1, "utf8" );
 			endif;
+
+			// add the category name to each object
+			$record->catname = modAZDirectoryHelper::azCategory( $record->catid );
+			
+			// add custom fields to each object
+			$record->customfields = modAZDirectoryHelper::azCustomFields( $record->id );
+
 		endforeach;
-				
+		
 		// remove objects where the selected letter is not the targeted letter
-		if( $letter != JText::_( 'JALL' ) ) :
+		if( $letter != Text::_( 'JALL' ) ) :
 			$result = array_filter( $result, function( $a ) use ( $letter ){
 				return $a->letter === $letter;
 			});
@@ -505,7 +536,7 @@ class modAZDirectoryHelper
 					return strcmp( $a->sortname1, $b->sortname1 );
 					break;
 				case 'component' :
-					return strnatcmp( $a->ordering, $b->ordering );
+					return strcmp( $a->ordering, $b->ordering );
 					break;
 				default :
 					return strcoll( $a->ln, $b->ln );
@@ -528,7 +559,9 @@ class modAZDirectoryHelper
 	 *
 	 * @access    public
 	 */
-	public static function azCustomFields( $id ){
+	public static function azCustomFields( $id )
+	{
+		JLoader::register( 'FieldsHelper', JPATH_ADMINISTRATOR . '/components/com_fields/helpers/fields.php' );
 		// get custom fields by contact ID
 		$azCustomFields = FieldsHelper::getFields( 'com_contact.contact', $id, true );
 		// get custom field names
@@ -536,6 +569,7 @@ class modAZDirectoryHelper
 		// get custom field IDs
 		$azCustomFieldIDs = array_map( function( $o ){ return $o->id; }, $azCustomFields );
 		// load fields model
+		JModelLegacy::addIncludePath( JPATH_ADMINISTRATOR . '/components/com_fields/models', 'FieldsModel' );
 		$azModel = JModelLegacy::getInstance( 'Field', 'FieldsModel', array( 'ignore_request' => true ) );
 		// fetch values for custom field IDs
 		$azCustomFieldValues = $azModel->getFieldValues( $azCustomFieldIDs, $id );
@@ -544,30 +578,9 @@ class modAZDirectoryHelper
 		// eliminate array entries with empty values
 		$azIntersect = array_intersect_key( $azMap, $azCustomFieldValues );
 		// create an array setting the value of azIntersect as the keys of azCustomFieldValues
-		$azCombine = array();
-		foreach( $azIntersect as $key => $column ) :
-			$azCombine[$column] = $azCustomFieldValues[$key];
-		endforeach;
+		$azCombine = array_combine( $azIntersect, $azCustomFieldValues );
 		
 		return $azCombine;
-	}
-	
-	/**
-	 * Method to get numeric value of character as DEC string
-	 */
-	private static function _azMBConvertEncoding( $str, $to_encoding, $from_encoding = NULL )
-	{
-		return iconv( ( $from_encoding === NULL ) ? mb_internal_encoding() : $from_encoding, $to_encoding, $str );
-	}
-
-	private static function _azMBOrd( $char, $encoding = 'UTF-8' )
-	{
-		if( $encoding === 'UCS-4BE' ){
-			list( , $ord ) = ( strlen( $char ) === 4 ) ? @unpack('N', $char ) : @unpack( 'n', $char );
-			return $ord;
-		} else {
-			return modAZDirectoryHelper::_azMBOrd( modAZDirectoryHelper::_azMBConvertEncoding( $char, 'UCS-4BE', $encoding ), 'UCS-4BE' );
-		}
 	}
 
 	private static function _azStrPadUnicode( $str, $pad_len, $pad_str = ' ', $dir = STR_PAD_RIGHT )

@@ -1,1 +1,154 @@
-document.addEventListener("DOMContentLoaded",function(){azTriggerSelect(),azTriggerClick(),azModal(),azPagination()});var azPagination=function(){for(var e=document.querySelectorAll(".modazdirectory__pagination a"),t=0;t<e.length;t++)e[t].addEventListener("click",function(e){e.preventDefault();var t=new URLSearchParams(e.target.href),a="All";t.get("lastletter")&&(a=t.get("lastletter"));var o=t.get("start");azRequest(a,o),document.getElementById("modazdirectory").scrollIntoView()})},azPush=function(e){if(window.history&&history.pushState){var t="?lastletter="+e+"#modazdirectory";history.pushState(e,"",t)}},azTriggerClick=function(){for(var e=document.querySelectorAll(".modazdirectory__link"),t=0;t<e.length;t++)e[t].addEventListener("click",function(e){e.preventDefault();var t=this.rel;azRequest(t),azPush(t)})},azTriggerSelect=function(){var e=document.getElementById("modazdirectory__select");void 0!==e&&null!=e&&e.addEventListener("change",function(e){var t,a=e.target.selectedIndex,o=e.target.options;t=0==o[a].index?o[1].text:o[a].text,azRequest(t),azPush(t)})},azSelectDefault=function(e){for(var t=document.getElementById("modazdirectory__select"),a=0;a<t.options.length;a++)t.options[a].text==e&&(t.options[a].selected=!0)};window.addEventListener("popstate",function(e){null!==e.state&&azRequest(e.state)});var azRequest=function(e,t){t=t||"0","All"==e&&(e=Joomla.JText._("JALL"));var a="?option=com_ajax&module=azdirectory&method=getContacts&data[letter]="+e+"&data[start]="+t+"&data[title]="+encodeURIComponent(modazModuleTitle)+"&format=json";fetch(a).then(function(e){return e.ok?e.text():Promise.reject(e)}).then(function(t){document.getElementById("modazdirectory").innerHTML=t,azSelectDefault(e)}).then(azEmailCloak).then(azTriggerSelect).then(azTriggerClick).then(azModal).then(azPagination).catch(function(e){console.warn(e)})},azEmailCloak=function(){for(var e,t,a=document.getElementById("modazdirectory").querySelectorAll("script"),o=0;o<a.length;o++)e=a[o],(t=document.createElement("script")).type=e.type,e.innerHTML?t.innerHTML=e.innerHTML:t.src=e.src,t.async=!1,e.replaceWith(t)},azModal=function(){if(0!=modazNameHyperlink){var e=modazModalStyle.displayFormat;"plain"!=e&&"tabs"!=e||jQuery('.modazdirectory__results a[data-toggle="modal"]').on("click",function(e){var t=jQuery(e.currentTarget).data("remote");return jQuery("#modazdirectory__modal").modal("show").find("#modazdirectory__modal-body").load(t),!1}),"sliders"==e&&jQuery('.modazdirectory__results a[data-toggle="modal"]').on("click",function(e){var t=jQuery(e.currentTarget).data("remote");return jQuery("#modazdirectory__modal").on("shown.bs.modal",function(){jQuery("#modazdirectory__modal-body").load(t,function(){jQuery("#slide-contact").attr("id","modazdirectory__slide-contact"),jQuery("#modazdirectory__modal .accordion-toggle").each(function(){jQuery(this).on("click",function(){var e=jQuery(this).parent().parent().next();return e.hasClass("in")?e.removeClass("in"):e.addClass("in"),!1})})})}).modal(),!1}),jQuery("[data-dismiss]").on("click",function(){jQuery("#modazdirectory__modal-body").html('<div class="modal-spinner"></div>')})}};
+document.addEventListener( "DOMContentLoaded", function() {	
+	azTriggerSelect();	// trigger selection
+	azTriggerClick(); // trigger click
+	azModal(); // trigger modal
+	azPagination(); // trigger pagination
+});
+
+var azPagination = function() {
+	var azPageNav = document.querySelectorAll( '.modazdirectory__pagination a' );
+	for( var i = 0; i < azPageNav.length; i++ ){
+		azPageNav[i].addEventListener( 'click', function( e ){
+			// disable default behavior
+			e.preventDefault();
+			
+			// get the parameters to pass to azRequest
+			var azUrlParams = new URLSearchParams( e.target.href );
+			var azLetter = 'All';
+			if( azUrlParams.get( 'lastletter' ) ){
+				azLetter = azUrlParams.get( 'lastletter' );
+			}
+			var azStart = azUrlParams.get( 'start' );
+			azRequest( azLetter, azStart );
+			
+			// anchor
+			var modazdirectory = document.getElementById( 'modazdirectory' );
+			modazdirectory.scrollIntoView();
+		});
+	}
+};
+
+var azPush = function( letter ) {
+	// history API
+	if( window.history && history.pushState ) {
+		var azURL = '?lastletter=' + letter + '#modazdirectory';
+		history.pushState( letter, '', azURL );
+	}
+};
+
+var azTriggerClick = function() {
+	var azLink = document.querySelectorAll( '.modazdirectory__link' );
+	for( var i = 0; i < azLink.length; i++ ){
+		azLink[i].addEventListener( 'click', function( e ){
+			e.preventDefault();
+			var azLetter = this.rel;
+			azRequest( azLetter );
+			azPush( azLetter );
+		});
+	}
+};
+
+var azTriggerSelect = function() {
+	var azSelect = document.getElementById( 'modazdirectory__select' );
+	azSelect.addEventListener( 'change', function( e ){
+		var azLetter;
+		var azSelectedIndex = e.target.selectedIndex;
+		var azOptions = e.target.options;
+		
+		// if the first option is selected => "Last Name"
+		if( azOptions[azSelectedIndex].index == 0 ){
+			// select the second option => "All"
+			azLetter = azOptions[1].text;
+		} else {
+			azLetter = azOptions[azSelectedIndex].text;
+		}
+		
+		azRequest( azLetter );
+		azPush( azLetter );
+	});
+};
+
+var azSelectDefault = function( letter ) {
+	var azSelect = document.getElementById( 'modazdirectory__select' );
+	for( var i = 0; i < azSelect.options.length; i++ ){
+		if( azSelect.options[i].text == letter ){
+			azSelect.options[i].selected = true;
+		}
+	}
+};
+
+window.addEventListener( 'popstate', function( e ) {
+	if( e.state !== null ) azRequest( e.state );
+});
+
+var azRequest = function( letter, start ) {
+	start = start || "0";
+	
+	if( letter == 'All' ) letter = Joomla.JText._( 'JALL' );
+	
+	var azUrl = '?option=com_ajax&module=azdirectory&method=getContacts&data[letter]=' + letter + '&data[start]=' + start + '&data[title]=' + encodeURIComponent( modazModuleTitle ) + '&format=json';
+	fetch( azUrl )
+		.then( function( azResp ){
+			if( azResp.ok ){
+				return azResp.text();
+			} else {
+				return Promise.reject( azResp );
+			}
+		})
+		.then( function( azHtml ){
+			// replace with the DOM with the response
+			var azDirectory = document.getElementById( 'modazdirectory' );
+			azDirectory.innerHTML = azHtml;
+			azSelectDefault( letter );
+		})
+		.then( azEmailCloak )
+		.then( azTriggerSelect )
+		.then( azTriggerClick )
+		.then( azModal )
+		.then( azPagination )
+		.catch( function( azErr ){
+			console.warn( azErr );
+		});
+};
+
+var azEmailCloak = function() {
+	var azDirectory = document.getElementById( 'modazdirectory' );
+	
+	// look for embedded scripts within the HTML
+	var azScripts = azDirectory.querySelectorAll( 'script' ), azScript, azFixedScript;
+	
+	// replace them with newly created <script> elements
+	for( var i = 0; i < azScripts.length; i++ ){
+		azScript = azScripts[i];
+		azFixedScript = document.createElement( 'script' );
+		azFixedScript.type = azScript.type;
+		if( azScript.innerHTML ){
+			azFixedScript.innerHTML = azScript.innerHTML;
+		} else {
+			azFixedScript.src = azScript.src;
+		}
+		azFixedScript.async = false;
+		
+		azScript.replaceWith( azFixedScript );
+	}
+}
+
+var azModal = function() {
+
+	if( modazNameHyperlink == 0 ) return;
+	
+	var modazModal = document.getElementById( 'modazdirectory__modal' );
+	// fire immediately
+	modazModal.addEventListener( 'show.bs.modal', function( e ){
+		// get the data-remote attribute
+		var modazRemoteUrl = e.relatedTarget.dataset.remote;
+		// jQuery .load replacement
+		fetch( modazRemoteUrl )
+		.then( function( modazResp ){
+			return modazResp.text();
+		})
+		.then( function( modazBody ){
+			document.getElementById( 'modazdirectory__modal-body' ).innerHTML = modazBody;
+		});
+	});
+};

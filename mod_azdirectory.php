@@ -13,18 +13,25 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 
 require_once dirname(__FILE__) . '/helper.php';
 require_once dirname(__FILE__) . '/helpers/parser.php';
+
+use Joomla\CMS\Factory;
+use Joomla\CMS\Helper\ModuleHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Session\Session;
+use Joomla\CMS\Uri\Uri;
+
 $az = modAZDirectoryHelper::azInstance( $params, $module->id );
 
-$jinput = JFactory::getApplication()->input;
-$modAZAssetsPath = JUri::base() . 'modules/' . $module->module . '/assets/';
+$jinput = Factory::getApplication()->input;
+$modAZAssetsPath = Uri::base() . 'modules/' . $module->module . '/assets/';
 
 // set the module title to get a unique instance in the Ajax callback
-$doc = JFactory::getDocument();
+$doc = Factory::getDocument();
 $doc->addScriptDeclaration( 'var modazModuleTitle="' . $module->title . '";' );
 
 // process form submission
 if( $jinput->get( 'modazdirectory__select' ) ) :
-	JSession::checkToken() or die( 'Invalid Token' );
+	Session::checkToken() or die( 'Invalid Token' );
 	$az->submit( $jinput->getString( 'modazdirectory__select', '' ) );
 endif;
 
@@ -53,4 +60,4 @@ else :
 endif;
 
 list( $contacts, $total, $start ) = $az->azGenerateQuery( $lastletter, 0, $params );
-require JModuleHelper::getLayoutPath( 'mod_azdirectory', $params->get( 'layout', 'default' ) );
+require ModuleHelper::getLayoutPath( 'mod_azdirectory', $params->get( 'layout', 'default' ) );

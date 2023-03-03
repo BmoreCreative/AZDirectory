@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension type="module" version="3.0" client="site" method="upgrade">
+<extension type="module" version="4.0" client="site" method="upgrade">
     <name>AZDirectory</name>
     <author>Bmore Creative, Inc.</author>
 	<creationDate>March 2016</creationDate>
 	<copyright>Copyright (C) 2016 Bmore Creative, Inc. All rights reserved.</copyright>
 	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
 	<authorUrl>bmorecreativeinc.com</authorUrl>
-    <version>6.0.12</version>
+    <version>7.0.0</version>
     <description>Arrange contacts in an A-Z, directory-style layout</description>
     <files>
         <filename module="mod_azdirectory">mod_azdirectory.php</filename>
         <filename>mod_azdirectory.xml</filename>
         <filename>index.html</filename>
-        <filename>helper.php</filename>
+		<filename>helper.php</filename>
 		<folder>assets</folder>
 		<folder>helpers</folder>
 		<folder>language</folder>
@@ -29,8 +29,9 @@
 		<language tag="fr-FR">fr-FR/fr-FR.mod_azdirectory.ini</language>
 		<language tag="fr-FR">fr-FR/fr-FR.mod_azdirectory.sys.ini</language>
 	</languages>
+	<changelogurl>https://joomla.bmorecreativeinc.com/extensions/mod_azdirectory_changelog.xml</changelogurl>
 	<updateservers>
-		<server type="extension" name="Bmore Creative, Inc. Update Server" priority="1">https://joomla.bmorecreativeinc.com/extensions/mod_azdirectory_update.xml</server>
+		<server type="extension" name="Bmore Creative, Inc. Update Server" priority="1">https://joomla.bmorecreativeinc.com/extensions/mod_azdirectory_j4_update.xml</server>
 	</updateservers>
 	<update>
 		<schemas>
@@ -44,11 +45,12 @@
 				<field
 					name="id"
 					type="category"
-					description="MOD_AZDIRECTORY_CATEGORY_DESC"
+					label="JCATEGORY"
 					extension="com_contact"
-					label="MOD_AZDIRECTORY_CATEGORY_LABEL"
 					published="1"
-					multiple="true">
+					multiple="true"
+					class="multipleCategories"
+					layout="joomla.form.field.list-fancy-select">
 						<option value="">JOPTION_ALL_CATEGORIES</option>
 				</field>
 				
@@ -56,9 +58,9 @@
 					name="tags"
 					type="tag"
 					label="JTAG"
-					description="JTAG_DESC"
 					mode="ajax"
-					multiple="true" />
+					multiple="true"
+					class="multipleTags" />
 
 				<field
 					name="sortorder"
@@ -108,36 +110,36 @@
 				<field
 					name="show_name"
 					type="radio"
-					class="btn-group btn-group-yesno"
+					layout="joomla.form.field.radio.switcher"
 					default="1"
 					description="MOD_AZDIRECTORY_NAME_DESC"
 					label="MOD_AZDIRECTORY_NAME_LABEL">
-						<option value="1">JYES</option>
 						<option value="0">JNO</option>
+						<option value="1">JYES</option>
 				</field>
 				
 				<field
 					name="lastname_first"
 					type="radio"
-					class="btn-group btn-group-yesno"
+					layout="joomla.form.field.radio.switcher"
 					default="0"
 					showon="show_name:1"
 					description="MOD_AZDIRECTORY_LASTNAMEFIRST_DESC"
 					label="MOD_AZDIRECTORY_LASTNAMEFIRST_LABEL">
-						<option value="1">JYES</option>
 						<option value="0">JNO</option>
+						<option value="1">JYES</option>
 				</field>
 				
 				<field
 					name="name_hyperlink"
 					type="radio"
-					class="btn-group btn-group-yesno"
+					layout="joomla.form.field.radio.switcher"
 					default="0"
 					showon="show_name:1"
 					description="MOD_AZDIRECTORY_NAME_HYPERLINK_DESC"
 					label="MOD_AZDIRECTORY_NAME_HYPERLINK_LABEL">
-						<option value="1">JYES</option>
 						<option value="0">JNO</option>
+						<option value="1">JYES</option>
 				</field>
 
 				<field
@@ -148,115 +150,115 @@
 				<field
 					name="show_con_position"
 					type="radio"
-					class="btn-group btn-group-yesno"
+					layout="joomla.form.field.radio.switcher"
 					default="1"
 					description="MOD_AZDIRECTORY_CONTACT_POSITION_DESC"
 					label="MOD_AZDIRECTORY_CONTACT_POSITION_LABEL">
-						<option value="1">JYES</option>
 						<option value="0">JNO</option>
+						<option value="1">JYES</option>
 				</field>
 		
 				<field
 					name="show_address"
 					type="radio"
-					class="btn-group btn-group-yesno"
+					layout="joomla.form.field.radio.switcher"
 					default="1"
 					description="MOD_AZDIRECTORY_STREET_ADDRESS_DESC"
 					label="MOD_AZDIRECTORY_STREET_ADDRESS_LABEL">
-						<option value="1">JYES</option>
 						<option value="0">JNO</option>
+						<option value="1">JYES</option>
 				</field>
 	
 				<field
 					name="show_suburb"
 					type="radio"
-					class="btn-group btn-group-yesno"
+					layout="joomla.form.field.radio.switcher"
 					default="1"
 					description="MOD_AZDIRECTORY_TOWN-SUBURB_DESC"
 					label="MOD_AZDIRECTORY_TOWN-SUBURB_LABEL">
-						<option value="1">JYES</option>
 						<option value="0">JNO</option>
+						<option value="1">JYES</option>
 				</field>
 	
 				<field
 					name="show_state"
 					type="radio"
-					class="btn-group btn-group-yesno"
+					layout="joomla.form.field.radio.switcher"
 					default="1"
 					description="MOD_AZDIRECTORY_STATE-COUNTY_DESC"
 					label="MOD_AZDIRECTORY_STATE-COUNTY_LABEL">
-						<option value="1">JYES</option>
 						<option value="0">JNO</option>
+						<option value="1">JYES</option>
 				</field>
 	
 				<field
 					name="show_postcode"
 					type="radio"
-					class="btn-group btn-group-yesno"
+					layout="joomla.form.field.radio.switcher"
 					default="1"
 					description="MOD_AZDIRECTORY_POST-ZIP_CODE_DESC"
 					label="MOD_AZDIRECTORY_POST-ZIP_CODE_LABEL">
-						<option value="1">JYES</option>
 						<option value="0">JNO</option>
+						<option value="1">JYES</option>
 				</field>
 
 				<field
 					name="postcode_first"
 					type="radio"
-					class="btn-group btn-group-yesno"
+					layout="joomla.form.field.radio.switcher"
 					default="0"
 					showon="show_postcode:1"
 					description="MOD_AZDIRECTORY_POST-ZIP_CODEFIRST_DESC"
 					label="MOD_AZDIRECTORY_POST-ZIP_CODEFIRST_LABEL">
-						<option value="1">JYES</option>
 						<option value="0">JNO</option>
+						<option value="1">JYES</option>
 				</field>
 
 				<field
 					name="show_country"
 					type="radio"
-					class="btn-group btn-group-yesno"
+					layout="joomla.form.field.radio.switcher"
 					default="0"
 					description="MOD_AZDIRECTORY_COUNTRY_DESC"
 					label="MOD_AZDIRECTORY_COUNTRY_LABEL">
-						<option value="1">JYES</option>
 						<option value="0">JNO</option>
+						<option value="1">JYES</option>
 				</field>
-
+				
 				<field
 					name="show_misc"
 					type="radio"
-					class="btn-group btn-group-yesno"
+					layout="joomla.form.field.radio.switcher"
 					default="0"
 					description="MOD_AZDIRECTORY_MISC_DESC"
 					label="MOD_AZDIRECTORY_MISC_LABEL">
-						<option value="1">JYES</option>
 						<option value="0">JNO</option>
+						<option value="1">JYES</option>
 				</field>
 
 				<field
 					name="misc_layout"
 					type="radio"
-					class="btn-group btn-group-yesno"
+					layout="joomla.form.field.radio.switcher"
 					default="0"
 					showon="show_misc:1"
 					description="MOD_AZDIRECTORY_MISC_LAYOUT_DESC"
 					label="MOD_AZDIRECTORY_MISC_LAYOUT_LABEL">
-						<option value="1">JYES</option>
 						<option value="0">JNO</option>
+						<option value="1">JYES</option>
 				</field>
 
 				<field
 					name="show_customfields"
 					type="radio"
-					class="btn-group btn-group-yesno"
+					layout="joomla.form.field.radio.switcher"
 					default="0"
 					description="MOD_AZDIRECTORY_CUSTOM_FIELDS_DESC"
 					label="MOD_AZDIRECTORY_CUSTOM_FIELDS_LABEL">
-						<option value="1">JYES</option>
 						<option value="0">JNO</option>
+						<option value="1">JYES</option>
 				</field>
-						
+	
 				<field
 					type="spacer"
 					name="spacer_alphabet"
@@ -265,12 +267,12 @@
 				<field
 					name="show_alphabet"
 					type="radio"
-					class="btn-group btn-group-yesno"
+					layout="joomla.form.field.radio.switcher"
 					default="1"
 					description="MOD_AZDIRECTORY_ALPHABET_DESC"
 					label="MOD_AZDIRECTORY_ALPHABET_LABEL">
-						<option value="1">JYES</option>
 						<option value="0">JNO</option>
+						<option value="1">JYES</option>
 				</field>
 				
 				<field
@@ -279,7 +281,9 @@
 					default="0"
 					description="MOD_AZDIRECTORY_LANGUAGE_DESC"
 					label="JFIELD_LANGUAGE_LABEL"
-					multiple="true">
+					multiple="true"
+					class="multipleCategories"
+					layout="joomla.form.field.list-fancy-select">
 						<option value="0">MOD_AZDIRECTORY_LANGUAGE_ENGLISH</option>
 						<option value="1">MOD_AZDIRECTORY_LANGUAGE_SWEDISH</option>
 						<option value="2">MOD_AZDIRECTORY_LANGUAGE_RUSSIAN</option>
@@ -294,12 +298,12 @@
 				<field
 					name="show_category"
 					type="radio"
-					class="btn-group btn-group-yesno"
+					layout="joomla.form.field.radio.switcher"
 					default="0"
 					description="MOD_AZDIRECTORY_CATEGORY_DESC"
 					label="MOD_AZDIRECTORY_CATEGORY_LABEL">
-						<option value="1">JYES</option>
 						<option value="0">JNO</option>
+						<option value="1">JYES</option>
 				</field>
 
 				<field
@@ -318,24 +322,24 @@
 				<field
 					name="show_telephone"
 					type="radio"
-					class="btn-group btn-group-yesno"
+					layout="joomla.form.field.radio.switcher"
 					default="1"
 					description="MOD_AZDIRECTORY_TELEPHONE_DESC"
 					label="MOD_AZDIRECTORY_TELEPHONE_LABEL">
-						<option value="1">JYES</option>
 						<option value="0">JNO</option>
+						<option value="1">JYES</option>
 				</field>
 				
 				<field
 					name="show_telephone_icon"
 					type="radio"
-					class="btn-group btn-group-yesno"
+					layout="joomla.form.field.radio.switcher"
 					default="0"
 					showon="show_telephone:1"
 					description="MOD_AZDIRECTORY_TELEPHONE_ICON_DESC"
 					label="MOD_AZDIRECTORY_TELEPHONE_ICON_LABEL">
-						<option value="1">JYES</option>
 						<option value="0">JNO</option>
+						<option value="1">JYES</option>
 				</field>
 				
 				<field
@@ -349,13 +353,13 @@
 				<field
 					name="telephone_hyperlink"
 					type="radio"
-					class="btn-group btn-group-yesno"
+					layout="joomla.form.field.radio.switcher"
 					default="0"
 					showon="show_telephone:1"
 					description="MOD_AZDIRECTORY_TELEPHONE_HYPERLINK_DESC"
 					label="MOD_AZDIRECTORY_TELEPHONE_HYPERLINK_LABEL">
-						<option value="1">JYES</option>
 						<option value="0">JNO</option>
+						<option value="1">JYES</option>
 				</field>
 				
 				<field
@@ -366,24 +370,24 @@
 				<field
 					name="show_mobile"
 					type="radio"
-					class="btn-group btn-group-yesno"
+					layout="joomla.form.field.radio.switcher"
 					default="1"
 					description="MOD_AZDIRECTORY_MOBILE_DESC"
 					label="MOD_AZDIRECTORY_MOBILE_LABEL">
-						<option value="1">JYES</option>
 						<option value="0">JNO</option>
+						<option value="1">JYES</option>
 				</field>
 
 				<field
 					name="show_mobile_icon"
 					type="radio"
-					class="btn-group btn-group-yesno"
+					layout="joomla.form.field.radio.switcher"
 					default="0"
 					showon="show_mobile:1"
 					description="MOD_AZDIRECTORY_MOBILE_ICON_DESC"
 					label="MOD_AZDIRECTORY_MOBILE_ICON_LABEL">
-						<option value="1">JYES</option>
 						<option value="0">JNO</option>
+						<option value="1">JYES</option>
 				</field>
 				
 				<field
@@ -397,13 +401,13 @@
 				<field
 					name="mobile_hyperlink"
 					type="radio"
-					class="btn-group btn-group-yesno"
+					layout="joomla.form.field.radio.switcher"
 					default="0"
 					showon="show_mobile:1"
 					description="MOD_AZDIRECTORY_MOBILE_HYPERLINK_DESC"
 					label="MOD_AZDIRECTORY_MOBILE_HYPERLINK_LABEL">
-						<option value="1">JYES</option>
 						<option value="0">JNO</option>
+						<option value="1">JYES</option>
 				</field>
 
 				<field
@@ -414,24 +418,24 @@
 				<field
 					name="show_fax"
 					type="radio"
-					class="btn-group btn-group-yesno"
+					layout="joomla.form.field.radio.switcher"
 					default="1"
 					description="MOD_AZDIRECTORY_FAX_DESC"
 					label="MOD_AZDIRECTORY_FAX_LABEL">
-						<option value="1">JYES</option>
 						<option value="0">JNO</option>
+						<option value="1">JYES</option>
 				</field>
 
 				<field
 					name="show_fax_icon"
 					type="radio"
-					class="btn-group btn-group-yesno"
+					layout="joomla.form.field.radio.switcher"
 					default="0"
 					showon="show_fax:1"
 					description="MOD_AZDIRECTORY_FAX_ICON_DESC"
 					label="MOD_AZDIRECTORY_FAX_ICON_LABEL">
-						<option value="1">JYES</option>
 						<option value="0">JNO</option>
+						<option value="1">JYES</option>
 				</field>
 				
 				<field
@@ -445,13 +449,13 @@
 				<field
 					name="fax_hyperlink"
 					type="radio"
-					class="btn-group btn-group-yesno"
+					layout="joomla.form.field.radio.switcher"
 					default="0"
 					showon="show_fax:1"
-					description="MOD_AZDIRECTORY_FAXHYPERLINK_DESC"
+					description="MOD_AZDIRECTORY_FAX_HYPERLINK_DESC"
 					label="MOD_AZDIRECTORY_FAX_HYPERLINK_LABEL">
-						<option value="1">JYES</option>
 						<option value="0">JNO</option>
+						<option value="1">JYES</option>
 				</field>
 
 				<field
@@ -462,36 +466,36 @@
 				<field
 					name="show_email_to"
 					type="radio"
-					class="btn-group btn-group-yesno"
+					layout="joomla.form.field.radio.switcher"
 					default="1"
 					description="MOD_AZDIRECTORY_CONTACT_E_MAIL_DESC"
 					label="JGLOBAL_EMAIL">
-						<option value="1">JYES</option>
 						<option value="0">JNO</option>
+						<option value="1">JYES</option>
 				</field>
 
 				<field
 					name="show_email_to_icon"
 					type="radio"
-					class="btn-group btn-group-yesno"
+					layout="joomla.form.field.radio.switcher"
 					default="0"
 					showon="show_email_to:1"
 					description="MOD_AZDIRECTORY_CONTACT_E_MAIL_ICON_DESC"
 					label="MOD_AZDIRECTORY_CONTACT_E_MAIL_ICON_LABEL">
-						<option value="1">JYES</option>
 						<option value="0">JNO</option>
+						<option value="1">JYES</option>
 				</field>
 
 				<field
 					name="email_to_hyperlink"
 					type="radio"
-					class="btn-group btn-group-yesno"
+					layout="joomla.form.field.radio.switcher"
 					default="0"
 					showon="show_email_to:1"
 					description="MOD_AZDIRECTORY_CONTACT_E_MAIL_HYPERLINK_DESC"
 					label="MOD_AZDIRECTORY_CONTACT_E_MAIL_HYPERLINK_LABEL">
-						<option value="1">JYES</option>
 						<option value="0">JNO</option>
+						<option value="1">JYES</option>
 				</field>
 
 				<field
@@ -502,36 +506,36 @@
 				<field
 					name="show_webpage"
 					type="radio"
-					class="btn-group btn-group-yesno"
+					layout="joomla.form.field.radio.switcher"
 					default="1"
 					description="MOD_AZDIRECTORY_WEBPAGE_DESC"
 					label="MOD_AZDIRECTORY_WEBPAGE_LABEL">
-						<option value="1">JYES</option>
 						<option value="0">JNO</option>
+						<option value="1">JYES</option>
 				</field>
 
 				<field
 					name="show_webpage_icon"
 					type="radio"
-					class="btn-group btn-group-yesno"
+					layout="joomla.form.field.radio.switcher"
 					default="0"
 					showon="show_webpage:1"
 					description="MOD_AZDIRECTORY_WEBPAGE_ICON_DESC"
 					label="MOD_AZDIRECTORY_WEBPAGE_ICON_LABEL">
-						<option value="1">JYES</option>
 						<option value="0">JNO</option>
+						<option value="1">JYES</option>
 				</field>
 
 				<field
 					name="webpage_hyperlink"
 					type="radio"
-					class="btn-group btn-group-yesno"
+					layout="joomla.form.field.radio.switcher"
 					default="0"
 					showon="show_webpage:1"
 					description="MOD_AZDIRECTORY_WEBPAGE_HYPERLINK_DESC"
 					label="MOD_AZDIRECTORY_WEBPAGE_HYPERLINK_LABEL">
-						<option value="1">JYES</option>
 						<option value="0">JNO</option>
+						<option value="1">JYES</option>
 				</field>
 
 				<field
@@ -542,12 +546,12 @@
 				<field
 					name="show_image"
 					type="radio"
-					class="btn-group btn-group-yesno"
+					layout="joomla.form.field.radio.switcher"
 					default="1"
 					description="MOD_AZDIRECTORY_IMAGE_DESC"
 					label="MOD_AZDIRECTORY_IMAGE_LABEL">
-						<option value="1">JYES</option>
 						<option value="0">JNO</option>
+						<option value="1">JYES</option>
 				</field>
 
 				<field
@@ -558,12 +562,12 @@
 				<field
 					name="loadjs"
 					type="radio"
-					class="btn-group btn-group-yesno"
+					layout="joomla.form.field.radio.switcher"
 					default="1"
 					description="MOD_AZDIRECTORY_LOADJS_DESC"
 					label="MOD_AZDIRECTORY_LOADJS_LABEL">
-						<option value="1">JYES</option>
 						<option value="0">JNO</option>
+						<option value="1">JYES</option>
 				</field>
 
 				<field
@@ -573,7 +577,7 @@
 					
 				<field
 					name="pagination"
-					type="combo"
+					type="list"
 					default="All"
 					description="MOD_AZDIRECTORY_PAGINATION_DESC"
 					label="MOD_AZDIRECTORY_PAGINATION_LABEL">
@@ -596,12 +600,14 @@
 					name="layout"
 					type="modulelayout"
 					label="JFIELD_ALT_LAYOUT_LABEL"
-					description="JFIELD_ALT_MODULE_LAYOUT_DESC" />
+					class="form-select"
+					validate="moduleLayout" />
 				<field
 					name="moduleclass_sfx"
-					type="textarea" rows="3"
+					type="textarea"
 					label="COM_MODULES_FIELD_MODULECLASS_SFX_LABEL"
-					description="COM_MODULES_FIELD_MODULECLASS_SFX_DESC" />
+					rows="3"
+					validate="CssIdentifier" />
 			</fieldset>
 		</fields>
     </config>

@@ -10,6 +10,11 @@
 
 // no direct access
 defined('_JEXEC') or die('Restricted access');
+
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Pagination\Pagination;
+use Joomla\CMS\Uri\Uri;
 ?>
 
 <div class="modazdirectory<?php echo $moduleclass_sfx; ?>" id="modazdirectory">
@@ -18,21 +23,21 @@ defined('_JEXEC') or die('Restricted access');
 		<?php foreach( $azdirectory[0] as $alphabet => $letters ) : ?>
 			<?php if( sizeof( $azdirectory[0] ) > 1 ) : ?>
 			<p class="modazdirectory__label">
-				<?php echo JText::_( 'MOD_AZDIRECTORY_TMPL_CONTACTS_WITH' ); ?>
-				<?php echo JText::_( 'MOD_AZDIRECTORY_' . strtoupper( $alphabet ) ); ?>
-				<?php echo JText::_( 'MOD_AZDIRECTORY_TMPL_NAMES' ); ?>
+				<?php echo Text::_( 'MOD_AZDIRECTORY_TMPL_CONTACTS_WITH' ); ?>
+				<?php echo Text::_( 'MOD_AZDIRECTORY_' . strtoupper( $alphabet ) ); ?>
+				<?php echo Text::_( 'MOD_AZDIRECTORY_TMPL_NAMES' ); ?>
 			</p>
 			<?php endif; ?>
 			<ul class="modazdirectory__list">
 				<li class="modazdirectory__listitem-all">
-					<a class="modazdirectory__link" href="<?php echo JUri::current(); ?>?lastletter=<?php echo JText::_( 'JALL' ); ?>#modazdirectory" rel="<?php echo JText::_( 'JALL' ); ?>">
-						<?php echo JText::_( 'JALL' ); ?>
+					<a class="modazdirectory__link" href="<?php echo Uri::current(); ?>?lastletter=<?php echo Text::_( 'JALL' ); ?>#modazdirectory" rel="<?php echo Text::_( 'JALL' ); ?>">
+						<?php echo Text::_( 'JALL' ); ?>
 					</a>
 				</li>
 				<?php foreach( $letters as $letter ): ?>
 					<?php if( in_array( $letter, $azdirectory[1] ) ) : ?>
 						<?php $addnClass = ( ( $lastletter ) && ( $lastletter == $letter ) ) ? " selected" : ""; ?>
-						<li class="modazdirectory__listitem<?php echo $addnClass; ?>"><a class="modazdirectory__link" href="<?php echo JUri::current() . "?lastletter=" . $letter; ?>#modazdirectory" rel="<?php echo $letter; ?>"><?php echo $letter; ?></a></li>
+						<li class="modazdirectory__listitem<?php echo $addnClass; ?>"><a class="modazdirectory__link" href="<?php echo Uri::current() . "?lastletter=" . $letter; ?>#modazdirectory" rel="<?php echo $letter; ?>"><?php echo $letter; ?></a></li>
 					<?php else : ?>
 						<li class="modazdirectory__listitem"><?php echo $letter; ?></li>
 					<?php endif; ?>
@@ -43,14 +48,14 @@ defined('_JEXEC') or die('Restricted access');
 		<form name="modazdirectory__form" class="modazdirectory__form" method="post">
 			<select name="modazdirectory__select" id="modazdirectory__select">
 				<option value=""><?php echo $az->azFirstOption( $sortorder ); ?></option>
-				<option value="<?php echo JUri::current(); ?>?lastletter=<?php echo JText::_('JALL'); ?>#modazdirectory"><?php echo JText::_('JALL'); ?></option>
+				<option value="<?php echo Uri::current(); ?>?lastletter=<?php echo Text::_('JALL'); ?>#modazdirectory"><?php echo Text::_('JALL'); ?></option>
 				<?php foreach( $azdirectory[0] as $alphabet => $letters ) : ?>
 					<?php if( sizeof( $azdirectory[0] ) > 1 ) : ?>
-					<optgroup label="<?php echo JText::_( 'MOD_AZDIRECTORY_' . strtoupper( $alphabet ) ); ?>">
+					<optgroup label="<?php echo Text::_( 'MOD_AZDIRECTORY_' . strtoupper( $alphabet ) ); ?>">
 					<?php endif; ?>
 					<?php foreach( $letters as $letter ) : ?>
 						<?php if( in_array( $letter, $azdirectory[1] ) ) : ?>
-						<option value="<?php echo JUri::current() . "?lastletter=" . $letter; ?>#modazdirectory"><?php echo $letter; ?></option>
+						<option value="<?php echo Uri::current() . "?lastletter=" . $letter; ?>#modazdirectory"><?php echo $letter; ?></option>
 						<?php endif; ?>
 					<?php endforeach; ?>
 					<?php if( sizeof( $azdirectory[0] ) > 1 ): ?>
@@ -59,7 +64,7 @@ defined('_JEXEC') or die('Restricted access');
 				<?php endforeach; ?>
 			</select>
 			<noscript><input type="submit" name="modazdirectory__submit" id="modazdirectory__submit" value="Submit" /></noscript>
-			<?php echo JHtml::_( 'form.token' ); ?>
+			<?php echo HTMLHelper::_( 'form.token' ); ?>
 		</form>
 	<?php endif; ?>
 	
@@ -72,17 +77,16 @@ defined('_JEXEC') or die('Restricted access');
 
 		<div class="modazdirectory__results">
         	<?php foreach ( $contacts as $key => $contact ) : ?>
-	
 				<div class="modazdirectory__result modazdirectory__layout-misc_<?php echo ( ( $misc_layout == 1 ) ? 'on' : 'off' ); ?>">
                     <?php if ( $show_image == 1 ) : ?>
 						<?php if ( empty( $contact->image ) ) : ?>
                         <span class="modazdirectory__glyph-camera">
                             <svg class="modazdirectory__icon">
-                                <use xlink:href="<?php echo JUri::base() . 'modules/' . $module->module; ?>/assets/symbol-defs.svg#icon-camera"></use>
+                                <use xlink:href="<?php echo $modAZAssetsPath; ?>symbol-defs.svg#icon-camera"></use>
                             </svg>
                         </span>
 						<?php else : ?>
-                        <?php echo JHtml::_('image', JUri::base() . $contact->image, $az->azFormatName($contact->name, $lastname_first), array('class' => 'modazdirectory__image', 'itemprop' => 'image', 'loading' => 'lazy')); ?>
+                        <?php echo HTMLHelper::_('image', Uri::base() . $contact->image, $az->azFormatName($contact->name, $lastname_first), array('class' => 'modazdirectory__image', 'itemprop' => 'image', 'loading' => 'lazy')); ?>
                   	<?php endif; endif; ?>
 
                     <div>
@@ -90,10 +94,10 @@ defined('_JEXEC') or die('Restricted access');
 						<?php if ( $name_hyperlink ) : ?>
                         <h3>
 							<a
-							href="<?php echo JUri::base(); ?>index.php?option=com_contact&view=contact&id=<?php echo $contact->id; ?>" 
-							data-toggle="modal" 
-							data-target="#modazdirectory__modal" 
-							data-remote="<?php echo JUri::base(); ?>index.php?option=com_contact&view=contact&tmpl=component&id=<?php echo $contact->id; ?>
+							href="#modazdirectory__modal" 
+							data-bs-toggle="modal" 
+							data-bs-target="#modazdirectory__modal" 
+							data-remote="<?php echo Uri::base(); ?>index.php?option=com_contact&view=contact&tmpl=component&id=<?php echo $contact->id; ?>
 							">
 								<?php echo $az->azFormatName($contact->name, $lastname_first); ?>
 							</a>
@@ -112,15 +116,15 @@ defined('_JEXEC') or die('Restricted access');
                         <?php endif; ?>
 
                         <p><?php echo $az->azFormatAddress( $contact, $postcode_first ); ?></p>
-						
-						<?php if( $az->azVerify( 'country', $contact ) ) : ?>
-						<p><?php echo $contact->country; ?></p>
-						<?php endif; ?>
+
+                        <?php if ( $az->azVerify( 'country', $contact ) ) : ?>
+                        <p><?php echo $contact->country; ?></p>
+                        <?php endif; ?>
 
                         <?php if ( $show_category == 1 ): ?>
                         <p>
                             <span class="modazdirectory__label-category"><?php echo $category_label; ?></span>
-							<?php echo $az->azCategory( $contact->catid ); ?>
+							<?php echo $contact->catname; ?>
                         </p>
                         <?php endif; ?>
                         
@@ -147,7 +151,7 @@ defined('_JEXEC') or die('Restricted access');
 							<?php if ( $show_mobile_icon ) : ?>
 							<span class="modazdirectory__glyph">
 								<svg class="modazdirectory__icon">
-									<use xlink:href="<?php echo JUri::base() . 'modules/' . $module->module; ?>/assets/symbol-defs.svg#icon-mobile"></use>
+									<use xlink:href="<?php echo $modAZAssetsPath; ?>symbol-defs.svg#icon-mobile"></use>
 								</svg>
 							</span>
                             <?php endif; ?>
@@ -165,7 +169,7 @@ defined('_JEXEC') or die('Restricted access');
 							<?php if ( $show_fax_icon ) : ?>
 							<span class="modazdirectory__glyph">
 								<svg class="modazdirectory__icon">
-									<use xlink:href="<?php echo JUri::base() . 'modules/' . $module->module; ?>/assets/symbol-defs.svg#icon-fax"></use>
+									<use xlink:href="<?php echo $modAZAssetsPath; ?>symbol-defs.svg#icon-fax"></use>
 								</svg>
 							</span>
                             <?php endif; ?>
@@ -183,14 +187,14 @@ defined('_JEXEC') or die('Restricted access');
 							<?php if ( $show_email_to_icon ) : ?>
 							<span class="modazdirectory__glyph">
 								<svg class="modazdirectory__icon">
-									<use xlink:href="<?php echo JUri::base() . 'modules/' . $module->module; ?>/assets/symbol-defs.svg#icon-envelope"></use>
+									<use xlink:href="<?php echo $modAZAssetsPath; ?>symbol-defs.svg#icon-envelope"></use>
 								</svg>
 							</span>
                             <?php endif; ?>
                             <?php if ( $email_to_hyperlink ) : ?>
-                            <?php echo JHtml::_( 'email.cloak', $contact->email_to, 1 ); ?>
+                            <?php echo HTMLHelper::_( 'email.cloak', $contact->email_to, 1 ); ?>
                             <?php else : ?>
-							<?php echo JHtml::_( 'email.cloak', $contact->email_to, 0 ); ?>
+							<?php echo HTMLHelper::_( 'email.cloak', $contact->email_to, 0 ); ?>
                             <?php endif; ?>
                         </p>
                         <?php endif; ?>
@@ -200,7 +204,7 @@ defined('_JEXEC') or die('Restricted access');
 							<?php if ( $show_webpage_icon ) : ?>
 							<span class="modazdirectory__glyph">
 								<svg class="modazdirectory__icon">
-									<use xlink:href="<?php echo JUri::base() . 'modules/' . $module->module; ?>/assets/symbol-defs.svg#icon-sphere"></use>
+									<use xlink:href="<?php echo $modAZAssetsPath; ?>symbol-defs.svg#icon-sphere"></use>
 								</svg>
 							</span>
                             <?php endif; ?>
@@ -212,13 +216,12 @@ defined('_JEXEC') or die('Restricted access');
                         </p>
                         <?php endif; ?>
 
-						<?php if( $show_customfields == 1 ) : ?>
-						<?php $azCustomFields = $az->azCustomFields( $contact->id ); ?>
-						<?php foreach ( $azCustomFields as $azCustomK => $azCustomV ) : ?>
+						<?php if ( $show_customfields ) : ?>
+						<?php foreach ( $contact->customfields as $azCustomK => $azCustomV ) : ?>
 						<p><?php echo $azCustomK . ': ' . $azCustomV; ?></p>
 						<?php endforeach; ?>
 						<?php endif; ?>
-						
+
                         <?php if ( $az->azVerify( 'misc', $contact ) ): ?>
 						<blockquote>
                         <?php echo $contact->misc; ?>
@@ -232,27 +235,23 @@ defined('_JEXEC') or die('Restricted access');
 
 	<nav class="modazdirectory__pagination">
 		<?php
-		$azPagination = new JPagination( $total, $start, $pagination );
+		$azPagination = new Pagination( $total, $start, $pagination );
 		$azPagination->setAdditionalUrlParam( 'lastletter', $lastletter );
 		echo $azPagination->getPagesLinks();
 		?>
 	</nav>
 	
 	<?php if ( $name_hyperlink ) : ?>
-	<div id="modazdirectory__modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modazdirectory__label">
+	<div id="modazdirectory__modal" class="modal fade" tabindex="-1" aria-labelledby="modazdirectory__label">
 		<div class="modal-dialog modal-lg" role="document">
-			<div class="modal-content-container">
+			<div class="modal-content">
 				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-label="<?php echo JText::_( 'MOD_AZDIRECTORY_MODAL_CLOSE' ); ?>">
-						<span  aria-hidden="true">&times;</span>
-					</button>
-					<h4 class="modal-title" id="modazdirectory__label"><?php echo JText::_( 'MOD_AZDIRECTORY_MODAL_CONTACT_DETAILS' ); ?></h4>
+					<h5 class="modal-title" id="modazdirectory__label"><?php echo Text::_( 'MOD_AZDIRECTORY_MODAL_CONTACT_DETAILS' ); ?></h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="<?php echo Text::_( 'MOD_AZDIRECTORY_MODAL_CLOSE' ); ?>"></button>
 				</div>
-				<div class="modal-body modal-content" id="modazdirectory__modal-body">
-					<div class="modal-spinner"></div>
-				</div>
+				<div class="modal-body" id="modazdirectory__modal-body"></div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal"><?php echo JText::_( 'MOD_AZDIRECTORY_MODAL_CLOSE' ); ?></button>
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?php echo Text::_( 'MOD_AZDIRECTORY_MODAL_CLOSE' ); ?></button>
 				</div>
 			</div> <!-- .modal-content --> 
 		</div> <!-- .modal-dialog -->
