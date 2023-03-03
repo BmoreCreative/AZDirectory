@@ -1,45 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension type="module" version="4.0" client="site" method="upgrade">
-    <name>AZDirectory</name>
+<extension type="module" client="site" method="upgrade">
+    <name>mod_azdirectory</name>
     <author>Bmore Creative, Inc.</author>
 	<creationDate>March 2016</creationDate>
 	<copyright>Copyright (C) 2016 Bmore Creative, Inc. All rights reserved.</copyright>
 	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
 	<authorUrl>bmorecreativeinc.com</authorUrl>
-    <version>7.0.4</version>
-    <description>Arrange contacts in an A-Z, directory-style layout</description>
-    <files>
-        <filename module="mod_azdirectory">mod_azdirectory.php</filename>
+    <version>8.0.0</version>
+    <description>MOD_AZDIRECTORY_XML_DESCRIPTION</description>
+	<namespace path="src">Joomla\Module\Azdirectory</namespace>
+
+	<files>
         <filename>mod_azdirectory.xml</filename>
-        <filename>index.html</filename>
-		<filename>helper.php</filename>
-		<folder>assets</folder>
-		<folder>helpers</folder>
 		<folder>language</folder>
-		<folder>sql</folder>
+		<folder>services</folder>
+		<folder module="mod_azdirectory">src</folder>
         <folder>tmpl</folder>
     </files>
+
+	<media folder="media" destination="mod_azdirectory">
+		<folder>css</folder>
+		<folder>fonts</folder>
+		<folder>images</folder>
+		<folder>js</folder>
+		<filename>joomla.asset.json</filename>
+	</media>
+
 	<languages folder="language">
-		<language tag="en-GB">en-GB/en-GB.mod_azdirectory.ini</language>
-		<language tag="en-GB">en-GB/en-GB.mod_azdirectory.sys.ini</language>
-		<language tag="en-GB">es-ES/es-ES.mod_azdirectory.ini</language>
-		<language tag="en-GB">es-ES/es-ES.mod_azdirectory.sys.ini</language>		
-		<language tag="nl-NL">nl-NL/nl-NL.mod_azdirectory.ini</language>
-		<language tag="nl-NL">nl-NL/nl-NL.mod_azdirectory.sys.ini</language>
-		<language tag="fr-FR">fr-FR/fr-FR.mod_azdirectory.ini</language>
-		<language tag="fr-FR">fr-FR/fr-FR.mod_azdirectory.sys.ini</language>
+		<language tag="en-GB">en-GB/mod_azdirectory.ini</language>
+		<language tag="en-GB">en-GB/mod_azdirectory.sys.ini</language>
+		<language tag="es-ES">es-ES/mod_azdirectory.ini</language>
+		<language tag="es-ES">es-ES/mod_azdirectory.sys.ini</language>
+		<language tag="nl-NL">nl-NL/mod_azdirectory.ini</language>
+		<language tag="nl-NL">nl-NL/mod_azdirectory.sys.ini</language>
+		<language tag="fr-FR">fr-FR/mod_azdirectory.ini</language>
+		<language tag="fr-FR">fr-FR/mod_azdirectory.sys.ini</language>
 	</languages>
+
 	<changelogurl>https://joomla.bmorecreativeinc.com/extensions/mod_azdirectory_changelog.xml</changelogurl>
+
 	<updateservers>
 		<server type="extension" name="Bmore Creative, Inc. Update Server" priority="1">https://joomla.bmorecreativeinc.com/extensions/mod_azdirectory_j4_update.xml</server>
 	</updateservers>
-	<update>
-		<schemas>
-			<schemapath type="mysql">sql/mysql/updates</schemapath>
-		</schemas>
-	</update>
-	<scriptfile>script.php</scriptfile>
-    <config>
+
+	<config>
 		<fields name="params">
 			<fieldset name="basic" addfieldpath="/administrator/components/com_contact/models/fields">
 				<field

@@ -1,0 +1,38 @@
+{
+  "$schema": "https://developer.joomla.org/schemas/json-schema/web_assets.json",
+  "name": "mod_azdirectory",
+  "version": "7.1.0",
+  "description": "AZDirectory",
+  "license": "GPL-2.0-or-later",
+  "assets": [
+    {
+      "name": "mod_azdirectory.directory",
+      "type": "script",
+      "uri": "mod_azdirectory/modazdirectory.js",
+      "dependencies": [
+        "core"
+      ],
+      "attributes": {
+        "defer": true
+      }
+    },
+    {
+      "name": "mod_azdirectory.formsubmit",
+      "type": "script",
+      "uri": "mod_azdirectory/modazformsubmit.js",
+      "attributes": {
+        "defer": true
+      }
+    },
+    {
+      "name": "mod_azdirectory.bootstrap",
+      "type": "style",
+      "uri": "mod_azdirectory/modazbootstrap.css"
+    },
+    {
+      "name": "mod_azdirectory.directory",
+      "type": "style",
+      "uri": "mod_azdirectory/modazdirectory.css"
+    }
+  ]
+}
