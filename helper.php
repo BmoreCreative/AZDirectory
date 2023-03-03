@@ -578,7 +578,10 @@ class modAZDirectoryHelper
 		// eliminate array entries with empty values
 		$azIntersect = array_intersect_key( $azMap, $azCustomFieldValues );
 		// create an array setting the value of azIntersect as the keys of azCustomFieldValues
-		$azCombine = array_combine( $azIntersect, $azCustomFieldValues );
+		$azCombine = array();
+		foreach( $azIntersect as $key => $column ) :
+			$azCombine[$column] = $azCustomFieldValues[$key];
+		endforeach;
 		
 		return $azCombine;
 	}
