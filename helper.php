@@ -103,7 +103,18 @@ class modAZDirectoryHelper
 		
 		$query
 			->where( $db->quoteName( 'a.access' ) . ' IN (' . implode( ',', $authorised ) . ')' ) 
-			->where( $db->quoteName( 'a.published' ) . ' = 1' )
+			->where(
+				[
+					$db->quoteName( 'a.published' ) . ' = 1',
+					$db->quoteName( 'a.publish_up' ) . ' <= CURRENT_TIMESTAMP',
+				]
+			)
+			->andWhere(
+				[
+					$db->quoteName( 'a.publish_down' ) . ' = ' . $db->quote( '0000-00-00 00:00:00' ),
+					$db->quoteName( 'a.publish_down' ) . ' > CURRENT_TIMESTAMP'
+				]
+			)
 			->order( $db->quoteName( 'a.name' ) );
 		
 		$db->setQuery( $query );
@@ -439,7 +450,18 @@ class modAZDirectoryHelper
 
 		$query
 			->where( $db->quoteName( 'a.access' ) . ' IN (' . implode( ',', $authorised ) . ')' )
-			->where($db->quoteName( 'a.published' ) . ' = 1' );
+			->where(
+				[
+					$db->quoteName( 'a.published' ) . ' = 1',
+					$db->quoteName( 'a.publish_up' ) . ' <= CURRENT_TIMESTAMP',
+				]
+			)
+			->andWhere(
+				[
+					$db->quoteName( 'a.publish_down' ) . ' = ' . $db->quote( '0000-00-00 00:00:00' ),
+					$db->quoteName( 'a.publish_down' ) . ' > CURRENT_TIMESTAMP'
+				]
+			);
 		
 		$db->setQuery( $query );
 
